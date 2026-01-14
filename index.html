@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이돌 플래너 - 나만의 아이돌을 빛나게 하세요!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-pink: #FFD1DC;
+            --main-blue: #AEC6CF;
+            --main-purple: #DCD0FF;
+            --soft-yellow: #FFF9C4;
+            --text-color: #5D5D5D;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Jua', sans-serif; }
+
+        body {
+            background-color: var(--main-pink);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- 1. 진입 오버레이 --- */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--main-blue);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 2000; transition: background 0.6s ease-in-out;
+        }
+        #overlay.fade-out { background: transparent; pointer-events: none; }
+        .overlay-content { text-align: center; transform-origin: center center; }
+        .pop-out { animation: popOut 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+        @keyframes popOut {
+            0% { transform: scale(1); opacity: 1; }
+            40% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(0) rotate(15deg); opacity: 0; }
+        }
+        .start-btn {
+            padding: 22px 50px; font-size: 2.3rem; background: var(--white);
+            color: var(--main-blue); border: none; border-radius: 60px;
+            cursor: pointer; box-shadow: 0 10px 0 #89a3ad; transition: all 0.2s ease; margin-top: 30px;
+        }
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #89a3ad; }
+
+        /* --- 2. 상단 내비게이션 바 --- */
+        nav {
+            position: fixed; top: -100px; left: 0; width: 100%; height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex; justify-content: center; align-items: center;
+            gap: 20px; z-index: 1000; border-bottom: 4px solid var(--main-blue);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none;
+        }
+        nav.active-nav { top: 0; opacity: 1; pointer-events: auto; }
+
+        .nav-link {
+            padding: 8px 18px; border-radius: 20px; cursor: pointer;
+            color: var(--main-blue); font-size: 1.2rem; transition: all 0.2s;
+        }
+        .nav-link:hover { background: var(--main-pink); color: white; }
+        .nav-link.active { background: var(--main-blue); color: white; }
+
+        /* --- 3. 메인 컨텐츠 영역 --- */
+        #main-wrapper {
+            width: 100%; max-width: 1000px; padding-top: 50px; 
+            display: none; flex-direction: column; align-items: center;
+            transition: padding-top 0.5s ease;
+        }
+        #main-wrapper.nav-padding { padding-top: 100px; }
+
+        .view { display: none; width: 100%; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .view.active { display: flex; flex-direction: column; align-items: center; }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- 4. 페이지별 스타일 --- */
+        .home-logo { text-align: center; margin-bottom: 60px; margin-top: 20px; }
+        .home-logo h1 { font-size: 5.5rem; color: white; text-shadow: 6px 6px 0 var(--main-blue); animation: bounce 2s infinite; }
+        .info-tag { font-size: 1.2rem; color: white; background: rgba(0,0,0,0.1); padding: 5px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; }
+        
+        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-20px);} }
+
+        .menu-grid { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; }
+        .menu-card {
+            width: 280px; padding: 45px 20px; background: var(--white);
+            border-radius: 40px; border: 6px dashed var(--main-blue);
+            text-align: center; cursor: pointer; transition: all 0.3s ease;
+        }
+        .menu-card:hover { transform: translateY(-12px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-style: solid; }
+        .card-char { border-color: var(--main-pink); color: #ff8fa3; }
+        .card-outfit { border-color: var(--soft-yellow); color: #ecbd00; }
+        .card-cmd { border-color: var(--main-blue); color: var(--main-blue); }
+
+        .content-box {
+            width: 90%; background: var(--white); padding: 50px;
+            border-radius: 40px; border: 8px solid var(--main-pink);
+            margin-bottom: 80px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .outfit-notice {
+            background: #fff0f3; color: #d88a9a; padding: 15px; 
+            border-radius: 15px; margin-bottom: 25px; text-align: center;
+            font-size: 1.1rem; border: 2px dashed var(--main-pink);
+        }
+
+        /* 의상 그리드 레이아웃 */
+        .outfit-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;
+        }
+
+        .list-item { 
+            background: #fdfdfd; padding: 12px 18px; border-radius: 20px; 
+            border-left: 8px solid var(--main-pink); display: flex; 
+            align-items: center; gap: 15px;
+            border-bottom: 1px solid #eee; transition: background 0.2s;
+        }
+        .list-item:hover { background: #fffafb; }
+
+        /* 아이콘 상자 스타일 */
+        .icon-box {
+            width: 45px; height: 45px; background: #eee; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .item-info { flex-grow: 1; display: flex; justify-content: space-between; align-items: center; }
+        .item-name { color: #d88a9a; font-weight: bold; font-size: 1.1rem; }
+        .item-code { background: var(--soft-yellow); color: #888; padding: 2px 10px; border-radius: 10px; font-size: 0.9rem; }
+
+        /* --- 5. 기타 요소 --- */
+        .volume-container {
+            position: fixed; bottom: 25px; right: 25px; background: var(--white);
+            padding: 12px 25px; border-radius: 40px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); z-index: 100; border: 3px solid var(--main-pink);
+            opacity: 0; transition: opacity 1s;
+        }
+        body.loaded .volume-container { opacity: 1; }
+        .bg-circle { position: fixed; z-index: -1; border-radius: 50%; background: var(--white); opacity: 0.4; animation: float 8s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-40px); } }
+
+        .back-btn {
+            margin-top: 30px; padding: 12px 40px; background: var(--main-pink);
+            color: white; border: none; border-radius: 35px; cursor: pointer; font-size: 1.3rem;
+            transition: transform 0.2s;
+        }
+        .back-btn:hover { transform: scale(1.1); background: var(--main-blue); }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <div class="overlay-content" id="overlayText">
+            <h2 style="color: white; font-size: 4rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.1);">아이돌 플래너</h2>
+            <button class="start-btn" onclick="startSite()">START!</button>
+        </div>
+    </div>
+
+    <nav id="nav-bar">
+        <div class="nav-link" onclick="showView('view-home')">HOME</div>
+        <div class="nav-link" onclick="showView('view-char')">캐릭터 목록</div>
+        <div class="nav-link" onclick="showView('view-outfit')">의상 목록</div>
+        <div class="nav-link" onclick="showView('view-cmd')">명령어 목록</div>
+    </nav>
+
+    <audio id="bgm" loop><source src="cute_bgm.mp3" type="audio/mpeg"></audio>
+    <audio id="startSfx"><source src="inside.mp3" type="audio/mpeg"></audio>
+
+    <div class="volume-container">
+        <span>🎵</span>
+        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.6">
+    </div>
+
+    <div class="bg-circle" style="width: 300px; height: 300px; top: -50px; left: -50px;"></div>
+    <div class="bg-circle" style="width: 200px; height: 200px; bottom: -50px; right: -50px; background: var(--main-purple);"></div>
+
+    <main id="main-wrapper">
+        
+        <div id="view-home" class="view active">
+            <div class="home-logo">
+                <h1>아이돌 플래너</h1>
+                <p style="font-size: 1.8rem; color: white;">🌸 프로듀서님, 환영합니다! 🌸</p>
+                <div class="info-tag">제작자: 아루이 / 플랫폼: 크랙</div>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-card card-char" onclick="showView('view-char')">
+                    <h2 style="font-size: 3rem; margin-bottom: 10px;">💖</h2><h2>캐릭터 목록</h2><p>아이돌을 만나보세요!</p>
+                </div>
+                <div class="menu-card card-outfit" onclick="showView('view-outfit')">
+                    <h2 style="font-size: 3rem; margin-bottom: 10px;">👗</h2><h2>의상 목록</h2><p>의상을 코디해보세요!</p>
+                </div>
+                <div class="menu-card card-cmd" onclick="showView('view-cmd')">
+                    <h2 style="font-size: 3rem; margin-bottom: 10px;">⌨️</h2><h2>명령어 목록</h2><p>게임 가이드 확인!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-char" class="view">
+            <div class="content-box">
+                <h2 style="color: var(--main-pink); margin-bottom: 30px; font-size: 2.8rem;">💖 캐릭터 목록</h2>
+                <p style="font-size: 1.6rem; color: #888; background: #fffafb; padding: 40px; border-radius: 20px; border: 2px dashed #ffd1dc;">*여기에 특징 작성 예정*</p>
+                <button class="back-btn" onclick="showView('view-home')">메인으로</button>
+            </div>
+        </div>
+
+        <div id="view-outfit" class="view">
+            <div class="content-box" style="border-color: var(--soft-yellow);">
+                <h2 style="color: #ecbd00; margin-bottom: 20px; font-size: 2.8rem;">👗 의상 목록</h2>
+                <div class="outfit-notice">✨ 알파벳은 링크에 사용되는 의상코드를 의미합니다! ✨</div>
+
+                <div class="outfit-grid">
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #e1f5fe;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 2L4 5v14l8 3 8-3V5l-8-3zm0 2.18L18 6.5v11.32l-6 2.25-6-2.25V6.5l6-2.32z" fill="#03a9f4"/></svg></div>
+                        <div class="item-info"><span class="item-name">연습복</span><span class="item-code">a</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #e8f5e9;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M21 5h-2.64l-1.14-3.14L15.41 1H8.59L6.78 1.86 5.64 5H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="#4caf50"/></svg></div>
+                        <div class="item-info"><span class="item-name">트레이닝복</span><span class="item-code">b</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #fff3e0;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M7 3c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2H7z" fill="#ff9800"/></svg></div>
+                        <div class="item-info"><span class="item-name">사복</span><span class="item-code">c</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #fce4ec;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#e91e63"/></svg></div>
+                        <div class="item-info"><span class="item-name">속옷</span><span class="item-code">d</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #fff;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zm-1-15v2h2V7h-2zm0 4v6h2v-6h-2z" fill="#ccc"/></svg></div>
+                        <div class="item-info"><span class="item-name">나체</span><span class="item-code">e</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #eee;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="#555"/></svg></div>
+                        <div class="item-info"><span class="item-name">속박</span><span class="item-code">f</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #e0f2f1;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 3L4 9v12h16V9l-8-6zm0 14.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#009688"/></svg></div>
+                        <div class="item-info"><span class="item-name">파자마</span><span class="item-code">g</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #fff; border: 1px solid #ddd;">
+                            <svg width="30" height="30" viewBox="0 0 24 24"><path d="M6 2h12v20H6z" fill="#fff"/><path d="M11 2l1 2 1-2h-2zM10 4h4l-2 5-2-5z" fill="#000"/></svg>
+                        </div>
+                        <div class="item-info"><span class="item-name">무대의상1</span><span class="item-code">h</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #E5E4E2;">
+                            <svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 2l2.4 7.3h7.6l-6.2 4.5 2.4 7.2-6.2-4.5-6.2 4.5 2.4-7.2-6.2-4.5h7.6z" fill="#fff"/><circle cx="5" cy="5" r="2" fill="white" opacity="0.8"/></svg>
+                        </div>
+                        <div class="item-info"><span class="item-name">무대의상2</span><span class="item-code">i</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #ffc1e3;">
+                            <svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#fff"/></svg>
+                        </div>
+                        <div class="item-info"><span class="item-name">무대의상3</span><span class="item-code">j</span></div>
+                    </div>
+                    <div class="list-item">
+                        <div class="icon-box" style="background: #333;">
+                            <svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9l-8 4.5-8-4.5v-9L12 3z" fill="#555"/></svg>
+                        </div>
+                        <div class="item-info"><span class="item-name">무대의상4</span><span class="item-code">k</span></div>
+                    </div>
+                    <div class="list-item"><div class="icon-box" style="background:#fce4ec"><span style="font-size:20px">🩺</span></div><div class="item-info"><span class="item-name">간호사복</span><span class="item-code">l</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#e3f2fd"><span style="font-size:20px">👮</span></div><div class="item-info"><span class="item-name">경찰복</span><span class="item-code">m</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#f3e5f5"><span style="font-size:20px">👗</span></div><div class="item-info"><span class="item-name">드레스</span><span class="item-code">n</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#f5f5f5"><span style="font-size:20px">🐰</span></div><div class="item-info"><span class="item-name">바니걸</span><span class="item-code">o</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#e0f7fa"><span style="font-size:20px">👙</span></div><div class="item-info"><span class="item-name">비키니</span><span class="item-code">p</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#ffebee"><span style="font-size:20px">🎅</span></div><div class="item-info"><span class="item-name">산타복</span><span class="item-code">q</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#cfd8dc"><span style="font-size:20px">👔</span></div><div class="item-info"><span class="item-name">수트</span><span class="item-code">r</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#263238"><span style="font-size:20px">🕶️</span></div><div class="item-info"><span class="item-name">올블랙정장</span><span class="item-code">s</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#fff"><span style="font-size:20px">👰</span></div><div class="item-info"><span class="item-name">웨딩드레스</span><span class="item-code">t</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#e8f5e9"><span style="font-size:20px">🧧</span></div><div class="item-info"><span class="item-name">한복</span><span class="item-code">u</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#fce4ec"><span style="font-size:20px">🧹</span></div><div class="item-info"><span class="item-name">메이드복</span><span class="item-code">v</span></div></div>
+                </div>
+
+                <button class="back-btn" onclick="showView('view-home')" style="background-color: #ecbd00;">메인으로</button>
+            </div>
+        </div>
+
+        <div id="view-cmd" class="view">
+            <div class="content-box" style="border-color: var(--main-blue);">
+                <h2 style="color: var(--main-blue); margin-bottom: 40px; font-size: 2.8rem;">⌨️ 명령어 목록</h2>
+                <div class="list-group">
+                    <h3># 스챗 진행 관련</h3>
+                    <div class="list-item"><div class="item-info"><span class="item-name">!팬사이트</span><span class="item-desc">팬 사이트 열람</span></div></div>
+                    <div class="list-item"><div class="item-info"><span class="item-name">!커뮤</span><span class="item-desc">DC 스타일 커뮤니티 사이트 열람</span></div></div>
+                    <div class="list-item"><div class="item-info"><span class="item-name">!위키</span><span class="item-desc">나무위키 스타일 사이트 열람</span></div></div>
+                    <div class="list-item"><div class="item-info"><span class="item-name">!기사</span><span class="item-desc">웹사이트 연예 기사 열람</span></div></div>
+                    <div class="list-item"><div class="item-info"><span class="item-name">!SNS</span><span class="item-desc">인스타 스타일 SNS 피드 열람</span></div></div>
+                    <div class="list-item"><div class="item-info"><span class="item-name">!피팅</span><span class="item-desc">의상 목록 확인</span></div></div>
+                </div>
+                <div class="list-group">
+                    <h3># 디버그 관련</h3>
+                    <div class="list-item"><div class="item-info"><span class="item-name">!이미지</span><span class="item-desc">이미지 오류 시 디버그 명령어</span></div></div>
+                </div>
+                <button class="back-btn" onclick="showView('view-home')" style="background-color: var(--main-blue);">메인으로</button>
+            </div>
+        </div>
+
+        <footer style="color:white; padding: 60px 0;">&copy; 2026 Idol Planner Project. All Rights Reserved.</footer>
+    </main>
+
+    <script>
+        const bgm = document.getElementById('bgm');
+        const startSfx = document.getElementById('startSfx');
+        const volumeRange = document.getElementById('volumeRange');
+        const navBar = document.getElementById('nav-bar');
+        const mainWrapper = document.getElementById('main-wrapper');
+
+        bgm.volume = 0.6; startSfx.volume = 1.0;
+        volumeRange.addEventListener('input', (e) => bgm.volume = e.target.value);
+
+        function startSite() {
+            const overlay = document.getElementById('overlay');
+            const overlayText = document.getElementById('overlayText');
+            startSfx.play().catch(e => {});
+            bgm.play().catch(e => {});
+            overlayText.classList.add('pop-out');
+            setTimeout(() => {
+                overlay.classList.add('fade-out');
+                mainWrapper.style.display = 'flex';
+                document.body.classList.add('loaded');
+                setTimeout(() => { overlay.style.display = 'none'; }, 700);
+            }, 800);
+        }
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            if (viewId === 'view-home') {
+                navBar.classList.remove('active-nav');
+                mainWrapper.classList.remove('nav-padding');
+            } else {
+                navBar.classList.add('active-nav');
+                mainWrapper.classList.add('nav-padding');
+            }
+            const targetView = document.getElementById(viewId);
+            targetView.classList.add('active');
+            const activeLink = document.querySelector(`.nav-link[onclick="showView('${viewId}')"]`);
+            if(activeLink) activeLink.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
