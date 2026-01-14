@@ -322,18 +322,92 @@
         volumeRange.addEventListener('input', (e) => bgm.volume = e.target.value);
 
         function startSite() {
-            const overlay = document.getElementById('overlay');
-            const overlayText = document.getElementById('overlayText');
-            startSfx.play().catch(e => {});
-            bgm.play().catch(e => {});
-            overlayText.classList.add('pop-out');
-            setTimeout(() => {
-                overlay.classList.add('fade-out');
-                mainWrapper.style.display = 'flex';
-                document.body.classList.add('loaded');
-                setTimeout(() => { overlay.style.display = 'none'; }, 700);
-            }, 800);
+    const overlay = document.getElementById('overlay');
+    const overlayText = document.getElementById('overlayText');
+    const mainWrapper = document.getElementById('main-wrapper');
+
+    // [모바일 대응] 사용자 클릭 시 오디오 객체를 먼저 '활성화' 시킵니다.
+    // 일부 브라우저는 명시적으로 play()를 호출해야 잠금이 풀립니다.
+    
+    // 1. 효과음 재생
+    if (startSfx) {
+        startSfx.currentTime = 0; // 재생 위치 초기화
+        startSfx.play().then(() => {
+            console.log("SFX 재생 성공");
+        }).catch(e => {
+            console.log("SFX 재생 실패:", e);
+        });
+    }
+
+    // 2. 배경음악 재생 (약간의 시차를 두고 재생하면 더 안정적입니다)
+    setTimeout(() => {
+        if (bgm) {
+            bgm.play().then(() => {
+                console.log("BGM 재생 성공");
+            }).catch(e => {
+                console.log("BGM 재생 실패:", e);
+            });
         }
+    }, 100);
+
+    // 3. 연출 애니메이션 실행
+    overlayText.classList.add('pop-out');
+
+    setTimeout(() => {
+        overlay.classList.add('fade-out');
+        mainWrapper.classList.add('pop-in');
+        document.body.classList.add('loaded');
+
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            initScrollObserver();
+        }, 600);
+    }, 800);
+}
+function startSite() {
+    const overlay = document.getElementById('overlay');
+    const overlayText = document.getElementById('overlayText');
+    const mainWrapper = document.getElementById('main-wrapper');
+
+    // [모바일 대응] 사용자 클릭 시 오디오 객체를 먼저 '활성화' 시킵니다.
+    // 일부 브라우저는 명시적으로 play()를 호출해야 잠금이 풀립니다.
+    
+    // 1. 효과음 재생
+    if (startSfx) {
+        startSfx.currentTime = 0; // 재생 위치 초기화
+        startSfx.play().then(() => {
+            console.log("SFX 재생 성공");
+        }).catch(e => {
+            console.log("SFX 재생 실패:", e);
+        });
+    }
+
+    // 2. 배경음악 재생 (약간의 시차를 두고 재생하면 더 안정적입니다)
+    setTimeout(() => {
+        if (bgm) {
+            bgm.play().then(() => {
+                console.log("BGM 재생 성공");
+            }).catch(e => {
+                console.log("BGM 재생 실패:", e);
+            });
+        }
+    }, 100);
+
+    // 3. 연출 애니메이션 실행
+    overlayText.classList.add('pop-out');
+
+    setTimeout(() => {
+        overlay.classList.add('fade-out');
+        mainWrapper.classList.add('pop-in');
+        document.body.classList.add('loaded');
+
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            initScrollObserver();
+        }, 600);
+    }, 800);
+}
+
 
         function showView(viewId) {
             document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
@@ -355,3 +429,4 @@
 </body>
 
 </html>
+
