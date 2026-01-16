@@ -22,17 +22,19 @@
         /* --- 애니메이션 --- */
         @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0) rotate(15deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes popInElastic { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-40px); } }
 
         /* --- 진입 오버레이 --- */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; transition: background 0.6s ease-in-out; }
         #overlay.fade-out { background: transparent; pointer-events: none; }
-        .overlay-content { text-align: center; transform-origin: center center; padding: 20px; }
+        .overlay-content { text-align: center; transform-origin: center center; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .pop-out { animation: popOut 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
         .start-btn { padding: 22px 50px; font-size: 2.3rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 0 #89a3ad; transition: all 0.2s ease; margin-top: 30px; -webkit-tap-highlight-color: transparent; }
         .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #89a3ad; }
+        
+        /* 시작 화면 로고 이미지 스타일 */
+        .start-logo-img { width: 80%; max-width: 500px; height: auto; margin-bottom: 20px; }
 
         /* --- 내비게이션 바 --- */
         nav { position: fixed; top: -100px; left: 0; width: 100%; height: 70px; background: rgba(255, 255, 255, 0.95); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; border-bottom: 4px solid var(--main-blue); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; }
@@ -48,8 +50,9 @@
         .view.active { display: flex; flex-direction: column; align-items: center; }
 
         /* --- 홈 & 메뉴 카드 --- */
-        .home-logo { text-align: center; margin-bottom: 60px; }
-        .home-logo h1 { font-size: 5.5rem; color: white; text-shadow: 6px 6px 0 var(--main-blue); animation: bounce 2s infinite; }
+        .home-logo { text-align: center; margin-bottom: 60px; display: flex; flex-direction: column; align-items: center; }
+        /* 메인 로고 이미지 스타일 (바운스 효과 적용) */
+        .main-logo-img { width: 90%; max-width: 600px; height: auto; margin-bottom: 20px; animation: bounce 2s infinite; }
         .info-tag { font-size: 1.2rem; color: white; background: rgba(0,0,0,0.1); padding: 5px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; }
         .menu-grid { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; width: 100%; }
         .menu-card { width: 280px; padding: 45px 20px; background: var(--white); border-radius: 40px; border: 6px dashed var(--main-blue); text-align: center; cursor: pointer; transition: all 0.3s ease; }
@@ -78,12 +81,12 @@
 
         /* --- 모달/뷰 포트 최적화 (반응형) --- */
         @media (max-width: 768px) {
-            .home-logo h1 { font-size: 3.5rem; }
             .menu-card { width: 100%; max-width: 350px; }
             .nav-link { font-size: 1rem; padding: 5px 12px; }
+            /* 태블릿 로고 크기 조절 */
+            .main-logo-img { max-width: 450px; }
         }
         @media (max-width: 480px) {
-            .home-logo h1 { font-size: 2.8rem; }
             .home-logo p { font-size: 1.2rem; }
             .start-btn { font-size: 1.8rem; padding: 15px 40px; }
             .content-box { padding: 30px 15px; }
@@ -92,6 +95,9 @@
             .volume-container { bottom: 15px; right: 15px; padding: 10px 15px; }
             nav { gap: 8px; }
             .nav-link { font-size: 0.9rem; padding: 4px 8px; }
+            /* 모바일 로고 크기 조절 */
+            .main-logo-img { max-width: 300px; margin-bottom: 10px; }
+            .start-logo-img { max-width: 280px; }
         }
     </style>
 </head>
@@ -99,7 +105,7 @@
 
     <div id="overlay">
         <div class="overlay-content" id="overlayText">
-            <h2 style="color: white; font-size: 4rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.1);">아이돌 플래너</h2>
+            <img src="logo.png" alt="아이돌 플래너 로고" class="start-logo-img">
             <button class="start-btn" id="startBtn">START!</button>
         </div>
     </div>
@@ -126,7 +132,7 @@
         
         <div id="view-home" class="view active">
             <div class="home-logo">
-                <h1>아이돌 플래너</h1>
+                <img src="logo.png" alt="아이돌 플래너 로고" class="main-logo-img">
                 <p style="font-size: 1.8rem; color: white;">🌸 프로듀서님, 환영합니다! 🌸</p>
                 <div class="info-tag">제작자: 아루이 / 플랫폼: 크랙</div>
             </div>
@@ -196,7 +202,6 @@
                 <button class="back-btn" onclick="showView('view-home')" style="background-color: var(--main-blue);">홈으로 돌아가기</button>
             </div>
         </div>
-
         <footer style="color:white; padding: 60px 0;">&copy; 2026 Idol Planner Project. All Rights Reserved.</footer>
     </main>
 
