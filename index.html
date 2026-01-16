@@ -32,7 +32,6 @@
         .overlay-content { text-align: center; transform-origin: center center; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .pop-out { animation: popOut 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
         .start-btn { padding: 22px 50px; font-size: 2.3rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 0 #89a3ad; transition: all 0.2s ease; margin-top: 30px; -webkit-tap-highlight-color: transparent; }
-        .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #89a3ad; }
         .start-logo-img { width: 80%; max-width: 500px; height: auto; margin-bottom: 20px; }
 
         /* --- 내비게이션 바 --- */
@@ -60,15 +59,31 @@
         .menu-img-btn::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; opacity: 0; pointer-events: none; }
         .menu-img-btn:active::after, .menu-img-btn:hover::after { animation: flashEffect 0.4s ease-out; }
 
-        /* --- 콘텐츠 박스 공통 --- */
-        .content-box { width: 100%; max-width: 850px; background: var(--white); padding: 50px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .list-group h3 { background: var(--main-blue); color: white; display: inline-block; padding: 6px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 1.4rem; margin-top: 10px; }
+        /* --- 캐릭터 배너 스타일 --- */
+        .char-category-grid { display: flex; flex-direction: column; gap: 20px; width: 100%; margin-top: 20px; }
+        .char-banner {
+            position: relative; width: 100%; height: 150px; border-radius: 30px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 3rem; color: white; text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            cursor: pointer; overflow: hidden; transition: all 0.3s ease;
+            border: 6px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        .main-banner { background: var(--main-pink); }
+        .sub-banner { background: var(--main-blue); }
+        .char-banner:hover { transform: translateY(-5px) scale(1.02); }
+        .char-banner::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; opacity: 0; pointer-events: none; }
+        .char-banner:active::after { animation: flashEffect 0.4s ease-out; }
 
-        /* --- 의상 목록 전용 --- */
+        /* --- 상세 리스트 영역 --- */
+        .char-detail-view { display: none; width: 100%; flex-direction: column; align-items: center; animation: popIn 0.5s forwards; }
+        .char-detail-view.active { display: flex; }
+
+        /* --- 콘텐츠 박스 공통 --- */
+        .content-box { width: 100%; max-width: 850px; background: var(--white); padding: 50px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+        .list-group h3 { background: var(--main-blue); color: white; display: inline-block; padding: 6px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 1.4rem; margin-top: 10px; }
         .outfit-notice { background: #fff0f3; color: #d88a9a; padding: 15px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 1.1rem; border: 2px dashed var(--main-pink); }
         .outfit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; width: 100%; }
-        .list-item { background: #fdfdfd; padding: 12px 18px; border-radius: 20px; border-left: 8px solid var(--main-pink); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; transition: background 0.2s; }
-        .list-item:hover { background: #fffafb; }
+        .list-item { background: #fdfdfd; padding: 12px 18px; border-radius: 20px; border-left: 8px solid var(--main-pink); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; }
         .icon-box { width: 45px; height: 45px; background: #eee; border-radius: 12px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; overflow: hidden; }
         .item-info { flex-grow: 1; display: flex; justify-content: space-between; align-items: center; gap: 5px; }
         .item-name { color: #d88a9a; font-weight: bold; font-size: 1rem; }
@@ -83,17 +98,8 @@
         .back-btn:hover { transform: scale(1.1); background: var(--main-blue); }
 
         /* --- 반응형 최적화 --- */
-        @media (max-width: 768px) { .menu-img-btn { width: 100%; max-width: 350px; } .nav-link { font-size: 1rem; padding: 5px 12px; } .main-logo-img { max-width: 400px; } }
-        @media (max-width: 480px) { 
-            .home-logo p { font-size: 1.2rem; } 
-            .start-btn { font-size: 1.8rem; padding: 15px 40px; } 
-            .content-box { padding: 30px 15px; } 
-            .content-box h2 { font-size: 2rem !important; }
-            .outfit-grid { grid-template-columns: 1fr; }
-            .nav-link { font-size: 0.85rem; padding: 4px 8px; }
-            .main-logo-img { max-width: 280px; }
-            .item-name { font-size: 0.9rem; }
-        }
+        @media (max-width: 768px) { .menu-img-btn { width: 100%; max-width: 350px; } .nav-link { font-size: 1rem; padding: 5px 12px; } .main-logo-img { max-width: 400px; } .char-banner { height: 120px; font-size: 2.2rem; } }
+        @media (max-width: 480px) { .home-logo p { font-size: 1.2rem; } .start-btn { font-size: 1.8rem; padding: 15px 40px; } .content-box { padding: 30px 15px; } .outfit-grid { grid-template-columns: 1fr; } .main-logo-img { max-width: 280px; } .char-banner { height: 100px; font-size: 2rem; } }
     </style>
 </head>
 <body>
@@ -128,7 +134,7 @@
         <div id="view-home" class="view active">
             <div class="home-logo">
                 <img src="logo.png" alt="아이돌 플래너 로고" class="main-logo-img">
-                <p style="font-size: 1.8rem; color: white;">🌸 대표님, 사랑랑합니다! 🌸</p>
+                <p style="font-size: 1.8rem; color: white;">🌸 프로듀서님, 환영합니다! 🌸</p>
                 <div class="info-tag">제작자: 아루이 / 플랫폼: 크랙</div>
             </div>
             <div class="menu-grid">
@@ -139,10 +145,25 @@
         </div>
 
         <div id="view-char" class="view">
-            <div class="content-box">
+            <div id="char-category-view" class="content-box">
                 <h2 style="color: var(--main-pink); margin-bottom: 30px; font-size: 2.8rem;">💖 캐릭터 목록</h2>
-                <p style="font-size: 1.6rem; color: #888; background: #fffafb; padding: 40px; border-radius: 20px; border: 2px dashed #ffd1dc;">*여기에 특징 작성 예정*</p>
+                <div class="char-category-grid">
+                    <div class="char-banner main-banner" onclick="openCharDetail('main')">MAIN</div>
+                    <div class="char-banner sub-banner" onclick="openCharDetail('sub')">SUB</div>
+                </div>
                 <button class="back-btn" onclick="showView('view-home')">홈으로 돌아가기</button>
+            </div>
+
+            <div id="char-detail-main" class="char-detail-view content-box">
+                <h2 style="color: var(--main-pink); margin-bottom: 30px; font-size: 2.5rem;">🌟 MAIN 캐릭터</h2>
+                <p style="font-size: 1.4rem; color: #888;">*여기에 MAIN 캐릭터 특징 작성 예정*</p>
+                <button class="back-btn" onclick="closeCharDetail()">뒤로 가기</button>
+            </div>
+
+            <div id="char-detail-sub" class="char-detail-view content-box" style="border-color: var(--main-blue);">
+                <h2 style="color: var(--main-blue); margin-bottom: 30px; font-size: 2.5rem;">✨ SUB 캐릭터</h2>
+                <p style="font-size: 1.4rem; color: #888;">*여기에 SUB 캐릭터 특징 작성 예정*</p>
+                <button class="back-btn" onclick="closeCharDetail()" style="background-color: var(--main-blue);">뒤로 가기</button>
             </div>
         </div>
 
@@ -171,7 +192,7 @@
                     <div class="list-item"><div class="icon-box" style="background:#cfd8dc"><span style="font-size:20px">👔</span></div><div class="item-info"><span class="item-name">수트</span><span class="item-code">r</span></div></div>
                     <div class="list-item"><div class="icon-box" style="background:#263238"><span style="font-size:20px">🕶️</span></div><div class="item-info"><span class="item-name">올블랙정장</span><span class="item-code">s</span></div></div>
                     <div class="list-item"><div class="icon-box" style="background:#fff"><span style="font-size:20px">👰</span></div><div class="item-info"><span class="item-name">웨딩드레스</span><span class="item-code">t</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#e8f5e green"><span style="font-size:20px">🧧</span></div><div class="item-info"><span class="item-name">한복</span><span class="item-code">u</span></div></div>
+                    <div class="list-item"><div class="icon-box" style="background:#e8f5e9"><span style="font-size:20px">🧧</span></div><div class="item-info"><span class="item-name">한복</span><span class="item-code">u</span></div></div>
                     <div class="list-item"><div class="icon-box" style="background:#fce4ec"><span style="font-size:20px">🧹</span></div><div class="item-info"><span class="item-name">메이드복</span><span class="item-code">v</span></div></div>
                 </div>
                 <button class="back-btn" onclick="showView('view-home')" style="background-color: #ecbd00;">홈으로 돌아가기</button>
@@ -225,9 +246,33 @@
 
         volumeRange.addEventListener('input', (e) => { bgm.volume = e.target.value; });
 
+        // 캐릭터 상세 페이지 열기
+        function openCharDetail(type) {
+            document.getElementById('char-category-view').style.display = 'none';
+            if (type === 'main') {
+                document.getElementById('char-detail-main').classList.add('active');
+            } else {
+                document.getElementById('char-detail-sub').classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 캐릭터 상세 페이지 닫기
+        function closeCharDetail() {
+            document.querySelectorAll('.char-detail-view').forEach(view => view.classList.remove('active'));
+            document.getElementById('char-category-view').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function showView(viewId) {
+            // 모든 뷰 초기화
             document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            // 캐릭터 페이지 내부 상태도 초기화
+            document.getElementById('char-category-view').style.display = 'block';
+            document.querySelectorAll('.char-detail-view').forEach(view => view.classList.remove('active'));
+
             if (viewId === 'view-home') {
                 navBar.classList.remove('active-nav');
                 mainWrapper.classList.remove('nav-padding');
@@ -235,6 +280,7 @@
                 navBar.classList.add('active-nav');
                 mainWrapper.classList.add('nav-padding');
             }
+
             document.getElementById(viewId).classList.add('active');
             const activeLink = document.querySelector(`.nav-link[onclick="showView('${viewId}')"]`);
             if(activeLink) activeLink.classList.add('active');
