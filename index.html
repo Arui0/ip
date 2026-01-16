@@ -19,11 +19,17 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Jua', sans-serif; }
         body { background-color: var(--main-pink); color: var(--text-color); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
         
-        /* --- 애니메이션 --- */
+        /* --- 애니메이션 정의 --- */
         @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0) rotate(15deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-40px); } }
+        /* 클릭 시 반짝이는 플래시 효과 */
+        @keyframes flashEffect {
+            0% { opacity: 0; }
+            50% { opacity: 0.8; background: rgba(255, 255, 255, 0.9); }
+            100% { opacity: 0; }
+        }
 
         /* --- 진입 오버레이 --- */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; transition: background 0.6s ease-in-out; }
@@ -32,8 +38,6 @@
         .pop-out { animation: popOut 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
         .start-btn { padding: 22px 50px; font-size: 2.3rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 0 #89a3ad; transition: all 0.2s ease; margin-top: 30px; -webkit-tap-highlight-color: transparent; }
         .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #89a3ad; }
-        
-        /* 시작 화면 로고 이미지 스타일 */
         .start-logo-img { width: 80%; max-width: 500px; height: auto; margin-bottom: 20px; }
 
         /* --- 내비게이션 바 --- */
@@ -49,17 +53,52 @@
         .view { display: none; width: 100%; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; padding: 20px; }
         .view.active { display: flex; flex-direction: column; align-items: center; }
 
-        /* --- 홈 & 메뉴 카드 --- */
-        .home-logo { text-align: center; margin-bottom: 60px; display: flex; flex-direction: column; align-items: center; }
-        /* 메인 로고 이미지 스타일 (바운스 효과 적용) */
+        /* --- 홈 화면 스타일 --- */
+        .home-logo { text-align: center; margin-bottom: 50px; display: flex; flex-direction: column; align-items: center; }
         .main-logo-img { width: 90%; max-width: 600px; height: auto; margin-bottom: 20px; animation: bounce 2s infinite; }
         .info-tag { font-size: 1.2rem; color: white; background: rgba(0,0,0,0.1); padding: 5px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; }
+        
+        /* 메뉴 그리드 및 이미지 버튼 스타일 */
         .menu-grid { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; width: 100%; }
-        .menu-card { width: 280px; padding: 45px 20px; background: var(--white); border-radius: 40px; border: 6px dashed var(--main-blue); text-align: center; cursor: pointer; transition: all 0.3s ease; }
-        .menu-card:hover { transform: translateY(-12px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-style: solid; }
-        .card-char { border-color: var(--main-pink); color: #ff8fa3; }
-        .card-outfit { border-color: var(--soft-yellow); color: #ecbd00; }
-        .card-cmd { border-color: var(--main-blue); color: var(--main-blue); }
+        
+        /* 이미지 버튼 컨테이너 (반짝임 효과를 위한 기준점) */
+        .menu-img-btn {
+            position: relative; /* 플래시 효과 오버레이의 기준 */
+            width: 280px;
+            cursor: pointer;
+            border-radius: 30px; /* 이미지 둥근 모서리에 맞춤 (필요시 조절) */
+            overflow: hidden; /* 플래시가 밖으로 나가지 않게 */
+            transition: transform 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 실제 메뉴 이미지 */
+        .menu-img-btn img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 호버 시 살짝 커지는 효과 */
+        .menu-img-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* 반짝이는 플래시 오버레이 (가상 요소) */
+        .menu-img-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent;
+            opacity: 0;
+            pointer-events: none; /* 클릭이 통과되도록 */
+        }
+
+        /* 클릭(active) 또는 호버 시 반짝임 애니메이션 실행 */
+        .menu-img-btn:active::after,
+        .menu-img-btn:hover::after {
+            animation: flashEffect 0.4s ease-out;
+        }
 
         /* --- 콘텐츠 박스 --- */
         .content-box { width: 100%; max-width: 800px; background: var(--white); padding: 50px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
@@ -72,18 +111,18 @@
         .item-code { background: var(--soft-yellow); color: #888; padding: 2px 10px; border-radius: 10px; font-size: 0.9rem; }
         .list-group h3 { background: var(--main-blue); color: white; display: inline-block; padding: 6px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 1.4rem; margin-top: 30px; }
 
-        /* --- 볼륨 및 배경 장식 --- */
+        /* --- 기타 요소 --- */
         .volume-container { position: fixed; bottom: 25px; right: 25px; background: var(--white); padding: 12px 25px; border-radius: 40px; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); z-index: 100; border: 3px solid var(--main-pink); opacity: 0; transition: opacity 1s; }
         body.loaded .volume-container { opacity: 1; }
         .bg-circle { position: fixed; z-index: -1; border-radius: 50%; background: var(--white); opacity: 0.4; animation: float 8s infinite ease-in-out; }
         .back-btn { margin-top: 30px; padding: 12px 40px; background: var(--main-pink); color: white; border: none; border-radius: 35px; cursor: pointer; font-size: 1.3rem; transition: transform 0.2s; }
         .back-btn:hover { transform: scale(1.1); background: var(--main-blue); }
 
-        /* --- 모달/뷰 포트 최적화 (반응형) --- */
+        /* --- 모바일 반응형 --- */
         @media (max-width: 768px) {
-            .menu-card { width: 100%; max-width: 350px; }
+            /* 태블릿/모바일에서 이미지 버튼 크기 조절 */
+            .menu-img-btn { width: 100%; max-width: 350px; }
             .nav-link { font-size: 1rem; padding: 5px 12px; }
-            /* 태블릿 로고 크기 조절 */
             .main-logo-img { max-width: 450px; }
         }
         @media (max-width: 480px) {
@@ -95,7 +134,6 @@
             .volume-container { bottom: 15px; right: 15px; padding: 10px 15px; }
             nav { gap: 8px; }
             .nav-link { font-size: 0.9rem; padding: 4px 8px; }
-            /* 모바일 로고 크기 조절 */
             .main-logo-img { max-width: 300px; margin-bottom: 10px; }
             .start-logo-img { max-width: 280px; }
         }
@@ -136,10 +174,17 @@
                 <p style="font-size: 1.8rem; color: white;">🌸 프로듀서님, 환영합니다! 🌸</p>
                 <div class="info-tag">제작자: 아루이 / 플랫폼: 크랙</div>
             </div>
+            
             <div class="menu-grid">
-                <div class="menu-card card-char" onclick="showView('view-char')"><h2 style="font-size: 3rem; margin-bottom: 10px;">💖</h2><h2>캐릭터 목록</h2><p>아이돌 지망생 정보</p></div>
-                <div class="menu-card card-outfit" onclick="showView('view-outfit')"><h2 style="font-size: 3rem; margin-bottom: 10px;">👗</h2><h2>의상 목록</h2><p>코디를 위한 의상 코드</p></div>
-                <div class="menu-card card-cmd" onclick="showView('view-cmd')"><h2 style="font-size: 3rem; margin-bottom: 10px;">⌨️</h2><h2>명령어 목록</h2><p>게임 가이드 & 디버그</p></div>
+                <div class="menu-img-btn" onclick="showView('view-char')">
+                    <img src="a.png" alt="캐릭터 목록">
+                </div>
+                <div class="menu-img-btn" onclick="showView('view-outfit')">
+                    <img src="c.png" alt="의상 목록">
+                </div>
+                <div class="menu-img-btn" onclick="showView('view-cmd')">
+                    <img src="b.png" alt="명령어 목록">
+                </div>
             </div>
         </div>
 
@@ -157,26 +202,6 @@
                 <div class="outfit-notice">✨ 알파벳은 링크에 사용되는 의상코드를 의미합니다! ✨</div>
                 <div class="outfit-grid">
                     <div class="list-item"><div class="icon-box" style="background: #e1f5fe;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 2L4 5v14l8 3 8-3V5l-8-3zm0 2.18L18 6.5v11.32l-6 2.25-6-2.25V6.5l6-2.32z" fill="#03a9f4"/></svg></div><div class="item-info"><span class="item-name">연습복</span><span class="item-code">a</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #e8f5e9;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M21 5h-2.64l-1.14-3.14L15.41 1H8.59L6.78 1.86 5.64 5H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="#4caf50"/></svg></div><div class="item-info"><span class="item-name">트레이닝복</span><span class="item-code">b</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #fff3e0;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M7 3c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2H7z" fill="#ff9800"/></svg></div><div class="item-info"><span class="item-name">사복</span><span class="item-code">c</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #fce4ec;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#e91e63"/></svg></div><div class="item-info"><span class="item-name">속옷</span><span class="item-code">d</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #fff;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zm-1-15v2h2V7h-2zm0 4v6h2v-6h-2z" fill="#ccc"/></svg></div><div class="item-info"><span class="item-name">나체</span><span class="item-code">e</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #eee;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="#555"/></svg></div><div class="item-info"><span class="item-name">속박</span><span class="item-code">f</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #e0f2f1;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 3L4 9v12h16V9l-8-6zm0 14.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#009688"/></svg></div><div class="item-info"><span class="item-name">파자마</span><span class="item-code">g</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #fff; border: 1px solid #ddd;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M6 2h12v20H6z" fill="#fff"/><path d="M11 2l1 2 1-2h-2zM10 4h4l-2 5-2-5z" fill="#000"/></svg></div><div class="item-info"><span class="item-name">무대의상1</span><span class="item-code">h</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #E5E4E2;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 2l2.4 7.3h7.6l-6.2 4.5 2.4 7.2-6.2-4.5-6.2 4.5 2.4-7.2-6.2-4.5h7.6z" fill="#fff"/><circle cx="5" cy="5" r="2" fill="white" opacity="0.8"/></svg></div><div class="item-info"><span class="item-name">무대의상2</span><span class="item-code">i</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #ffc1e3;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#fff"/></svg></div><div class="item-info"><span class="item-name">무대의상3</span><span class="item-code">j</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background: #333;"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9l-8 4.5-8-4.5v-9L12 3z" fill="#555"/></svg></div><div class="item-info"><span class="item-name">무대의상4</span><span class="item-code">k</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#fce4ec"><span style="font-size:20px">🩺</span></div><div class="item-info"><span class="item-name">간호사복</span><span class="item-code">l</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#e3f2fd"><span style="font-size:20px">👮</span></div><div class="item-info"><span class="item-name">경찰복</span><span class="item-code">m</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#f3e5f5"><span style="font-size:20px">👗</span></div><div class="item-info"><span class="item-name">드레스</span><span class="item-code">n</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#f5f5f5"><span style="font-size:20px">🐰</span></div><div class="item-info"><span class="item-name">바니걸</span><span class="item-code">o</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#e0f7fa"><span style="font-size:20px">👙</span></div><div class="item-info"><span class="item-name">비키니</span><span class="item-code">p</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#ffebee"><span style="font-size:20px">🎅</span></div><div class="item-info"><span class="item-name">산타복</span><span class="item-code">q</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#cfd8dc"><span style="font-size:20px">👔</span></div><div class="item-info"><span class="item-name">수트</span><span class="item-code">r</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#263238"><span style="font-size:20px">🕶️</span></div><div class="item-info"><span class="item-name">올블랙정장</span><span class="item-code">s</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#fff"><span style="font-size:20px">👰</span></div><div class="item-info"><span class="item-name">웨딩드레스</span><span class="item-code">t</span></div></div>
-                    <div class="list-item"><div class="icon-box" style="background:#e8f5e9"><span style="font-size:20px">🧧</span></div><div class="item-info"><span class="item-name">한복</span><span class="item-code">u</span></div></div>
                     <div class="list-item"><div class="icon-box" style="background:#fce4ec"><span style="font-size:20px">🧹</span></div><div class="item-info"><span class="item-name">메이드복</span><span class="item-code">v</span></div></div>
                 </div>
                 <button class="back-btn" onclick="showView('view-home')" style="background-color: #ecbd00;">홈으로 돌아가기</button>
@@ -189,10 +214,6 @@
                 <div class="list-group">
                     <h3># 스챗 진행 관련</h3>
                     <div class="list-item"><div class="item-info"><span class="item-name">!팬사이트</span><span class="item-desc">팬 사이트 열람</span></div></div>
-                    <div class="list-item"><div class="item-info"><span class="item-name">!커뮤</span><span class="item-desc">DC 스타일 커뮤니티 사이트 열람</span></div></div>
-                    <div class="list-item"><div class="item-info"><span class="item-name">!위키</span><span class="item-desc">나무위키 스타일 사이트 열람</span></div></div>
-                    <div class="list-item"><div class="item-info"><span class="item-name">!기사</span><span class="item-desc">웹사이트 연예 기사 열람</span></div></div>
-                    <div class="list-item"><div class="item-info"><span class="item-name">!SNS</span><span class="item-desc">인스타 스타일 SNS 피드 열람</span></div></div>
                     <div class="list-item"><div class="item-info"><span class="item-name">!피팅</span><span class="item-desc">의상 목록 확인</span></div></div>
                 </div>
                 <div class="list-group">
