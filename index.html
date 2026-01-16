@@ -6,44 +6,93 @@
     <title>아이돌 플래너 - 나만의 아이돌을 빛나게 하세요!</title>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
-        /* [기존 스타일 유지] */
-        :root { --main-pink: #FFD1DC; --main-blue: #AEC6CF; --main-purple: #DCD0FF; --soft-yellow: #FFF9C4; --text-color: #5D5D5D; --white: #ffffff; }
+        :root {
+            --main-pink: #FFD1DC;
+            --main-blue: #AEC6CF;
+            --main-purple: #DCD0FF;
+            --soft-yellow: #FFF9C4;
+            --text-color: #5D5D5D;
+            --white: #ffffff;
+        }
+
+        /* --- 기본 스타일 --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Jua', sans-serif; }
         body { background-color: var(--main-pink); color: var(--text-color); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        
+        /* --- 애니메이션 --- */
+        @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0) rotate(15deg); opacity: 0; } }
+        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes popInElastic { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-40px); } }
+
+        /* --- 진입 오버레이 --- */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; transition: background 0.6s ease-in-out; }
         #overlay.fade-out { background: transparent; pointer-events: none; }
-        .overlay-content { text-align: center; transform-origin: center center; }
+        .overlay-content { text-align: center; transform-origin: center center; padding: 20px; }
         .pop-out { animation: popOut 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
-        @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0) rotate(15deg); opacity: 0; } }
         .start-btn { padding: 22px 50px; font-size: 2.3rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 0 #89a3ad; transition: all 0.2s ease; margin-top: 30px; -webkit-tap-highlight-color: transparent; }
+        .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #89a3ad; }
+
+        /* --- 내비게이션 바 --- */
         nav { position: fixed; top: -100px; left: 0; width: 100%; height: 70px; background: rgba(255, 255, 255, 0.95); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; border-bottom: 4px solid var(--main-blue); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; }
         nav.active-nav { top: 0; opacity: 1; pointer-events: auto; }
-        .nav-link { padding: 8px 18px; border-radius: 20px; cursor: pointer; color: var(--main-blue); font-size: 1.2rem; }
+        .nav-link { padding: 8px 18px; border-radius: 20px; cursor: pointer; color: var(--main-blue); font-size: 1.2rem; transition: all 0.2s; }
+        .nav-link:hover { background: var(--main-pink); color: white; }
         .nav-link.active { background: var(--main-blue); color: white; }
+
+        /* --- 메인 영역 --- */
         #main-wrapper { width: 100%; max-width: 1000px; padding-top: 50px; display: none; flex-direction: column; align-items: center; transition: padding-top 0.5s ease; }
         #main-wrapper.nav-padding { padding-top: 100px; }
-        .view { display: none; width: 100%; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .view { display: none; width: 100%; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; padding: 20px; }
         .view.active { display: flex; flex-direction: column; align-items: center; }
-        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .home-logo { text-align: center; margin-bottom: 60px; margin-top: 20px; }
+
+        /* --- 홈 & 메뉴 카드 --- */
+        .home-logo { text-align: center; margin-bottom: 60px; }
         .home-logo h1 { font-size: 5.5rem; color: white; text-shadow: 6px 6px 0 var(--main-blue); animation: bounce 2s infinite; }
         .info-tag { font-size: 1.2rem; color: white; background: rgba(0,0,0,0.1); padding: 5px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; }
-        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-20px);} }
-        .menu-grid { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; }
+        .menu-grid { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; width: 100%; }
         .menu-card { width: 280px; padding: 45px 20px; background: var(--white); border-radius: 40px; border: 6px dashed var(--main-blue); text-align: center; cursor: pointer; transition: all 0.3s ease; }
-        .content-box { width: 90%; background: var(--white); padding: 50px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 80px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .menu-card:hover { transform: translateY(-12px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-style: solid; }
+        .card-char { border-color: var(--main-pink); color: #ff8fa3; }
+        .card-outfit { border-color: var(--soft-yellow); color: #ecbd00; }
+        .card-cmd { border-color: var(--main-blue); color: var(--main-blue); }
+
+        /* --- 콘텐츠 박스 --- */
+        .content-box { width: 100%; max-width: 800px; background: var(--white); padding: 50px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .outfit-notice { background: #fff0f3; color: #d88a9a; padding: 15px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 1.1rem; border: 2px dashed var(--main-pink); }
-        .outfit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+        .outfit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; width: 100%; }
         .list-item { background: #fdfdfd; padding: 12px 18px; border-radius: 20px; border-left: 8px solid var(--main-pink); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; }
-        .icon-box { width: 45px; height: 45px; background: #eee; border-radius: 12px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .icon-box { width: 45px; height: 45px; background: #eee; border-radius: 12px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; overflow: hidden; }
         .item-info { flex-grow: 1; display: flex; justify-content: space-between; align-items: center; }
         .item-name { color: #d88a9a; font-weight: bold; font-size: 1.1rem; }
         .item-code { background: var(--soft-yellow); color: #888; padding: 2px 10px; border-radius: 10px; font-size: 0.9rem; }
+        .list-group h3 { background: var(--main-blue); color: white; display: inline-block; padding: 6px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 1.4rem; margin-top: 30px; }
+
+        /* --- 볼륨 및 배경 장식 --- */
         .volume-container { position: fixed; bottom: 25px; right: 25px; background: var(--white); padding: 12px 25px; border-radius: 40px; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); z-index: 100; border: 3px solid var(--main-pink); opacity: 0; transition: opacity 1s; }
         body.loaded .volume-container { opacity: 1; }
         .bg-circle { position: fixed; z-index: -1; border-radius: 50%; background: var(--white); opacity: 0.4; animation: float 8s infinite ease-in-out; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-40px); } }
-        .back-btn { margin-top: 30px; padding: 12px 40px; background: var(--main-pink); color: white; border: none; border-radius: 35px; cursor: pointer; font-size: 1.3rem; }
+        .back-btn { margin-top: 30px; padding: 12px 40px; background: var(--main-pink); color: white; border: none; border-radius: 35px; cursor: pointer; font-size: 1.3rem; transition: transform 0.2s; }
+        .back-btn:hover { transform: scale(1.1); background: var(--main-blue); }
+
+        /* --- 모달/뷰 포트 최적화 (반응형) --- */
+        @media (max-width: 768px) {
+            .home-logo h1 { font-size: 3.5rem; }
+            .menu-card { width: 100%; max-width: 350px; }
+            .nav-link { font-size: 1rem; padding: 5px 12px; }
+        }
+        @media (max-width: 480px) {
+            .home-logo h1 { font-size: 2.8rem; }
+            .home-logo p { font-size: 1.2rem; }
+            .start-btn { font-size: 1.8rem; padding: 15px 40px; }
+            .content-box { padding: 30px 15px; }
+            .content-box h2 { font-size: 2rem !important; }
+            .outfit-grid { grid-template-columns: 1fr; }
+            .volume-container { bottom: 15px; right: 15px; padding: 10px 15px; }
+            nav { gap: 8px; }
+            .nav-link { font-size: 0.9rem; padding: 4px 8px; }
+        }
     </style>
 </head>
 <body>
@@ -51,7 +100,7 @@
     <div id="overlay">
         <div class="overlay-content" id="overlayText">
             <h2 style="color: white; font-size: 4rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.1);">아이돌 플래너</h2>
-            <button class="start-btn" id="finalStartBtn">START!</button>
+            <button class="start-btn" id="startBtn">START!</button>
         </div>
     </div>
 
@@ -74,6 +123,7 @@
     <div class="bg-circle" style="width: 200px; height: 200px; bottom: -50px; right: -50px; background: var(--main-purple);"></div>
 
     <main id="main-wrapper">
+        
         <div id="view-home" class="view active">
             <div class="home-logo">
                 <h1>아이돌 플래너</h1>
@@ -81,9 +131,9 @@
                 <div class="info-tag">제작자: 아루이 / 플랫폼: 크랙</div>
             </div>
             <div class="menu-grid">
-                <div class="menu-card card-char" onclick="showView('view-char')"><h2>💖</h2><h2>캐릭터 목록</h2><p>아이돌을 만나보세요!</p></div>
-                <div class="menu-card card-outfit" onclick="showView('view-outfit')"><h2>👗</h2><h2>의상 목록</h2><p>의상을 코디해보세요!</p></div>
-                <div class="menu-card card-cmd" onclick="showView('view-cmd')"><h2>⌨️</h2><h2>명령어 목록</h2><p>게임 가이드 확인!</p></div>
+                <div class="menu-card card-char" onclick="showView('view-char')"><h2 style="font-size: 3rem; margin-bottom: 10px;">💖</h2><h2>캐릭터 목록</h2><p>아이돌 지망생 정보</p></div>
+                <div class="menu-card card-outfit" onclick="showView('view-outfit')"><h2 style="font-size: 3rem; margin-bottom: 10px;">👗</h2><h2>의상 목록</h2><p>코디를 위한 의상 코드</p></div>
+                <div class="menu-card card-cmd" onclick="showView('view-cmd')"><h2 style="font-size: 3rem; margin-bottom: 10px;">⌨️</h2><h2>명령어 목록</h2><p>게임 가이드 & 디버그</p></div>
             </div>
         </div>
 
@@ -91,7 +141,7 @@
             <div class="content-box">
                 <h2 style="color: var(--main-pink); margin-bottom: 30px; font-size: 2.8rem;">💖 캐릭터 목록</h2>
                 <p style="font-size: 1.6rem; color: #888; background: #fffafb; padding: 40px; border-radius: 20px; border: 2px dashed #ffd1dc;">*여기에 특징 작성 예정*</p>
-                <button class="back-btn" onclick="showView('view-home')">메인으로</button>
+                <button class="back-btn" onclick="showView('view-home')">홈으로 돌아가기</button>
             </div>
         </div>
 
@@ -123,7 +173,7 @@
                     <div class="list-item"><div class="icon-box" style="background:#e8f5e9"><span style="font-size:20px">🧧</span></div><div class="item-info"><span class="item-name">한복</span><span class="item-code">u</span></div></div>
                     <div class="list-item"><div class="icon-box" style="background:#fce4ec"><span style="font-size:20px">🧹</span></div><div class="item-info"><span class="item-name">메이드복</span><span class="item-code">v</span></div></div>
                 </div>
-                <button class="back-btn" onclick="showView('view-home')" style="background-color: #ecbd00;">메인으로</button>
+                <button class="back-btn" onclick="showView('view-home')" style="background-color: #ecbd00;">홈으로 돌아가기</button>
             </div>
         </div>
 
@@ -143,9 +193,10 @@
                     <h3># 디버그 관련</h3>
                     <div class="list-item"><div class="item-info"><span class="item-name">!이미지</span><span class="item-desc">이미지 오류 시 디버그 명령어</span></div></div>
                 </div>
-                <button class="back-btn" onclick="showView('view-home')" style="background-color: var(--main-blue);">메인으로</button>
+                <button class="back-btn" onclick="showView('view-home')" style="background-color: var(--main-blue);">홈으로 돌아가기</button>
             </div>
         </div>
+
         <footer style="color:white; padding: 60px 0;">&copy; 2026 Idol Planner Project. All Rights Reserved.</footer>
     </main>
 
@@ -155,47 +206,33 @@
         const volumeRange = document.getElementById('volumeRange');
         const navBar = document.getElementById('nav-bar');
         const mainWrapper = document.getElementById('main-wrapper');
-        const startBtn = document.getElementById('finalStartBtn');
+        const startBtn = document.getElementById('startBtn');
 
         bgm.volume = 0.6;
         startSfx.volume = 1.0;
 
-        // [핵심] 모바일 오디오 잠금 해제 필살기
-        startBtn.addEventListener('click', function(e) {
-            // 브라우저 애니메이션보다 오디오 재생을 최우선으로 실행
-            startSfx.play().then(() => {
-                console.log("SFX Success");
-            }).catch(err => {
-                console.log("SFX Fail", err);
-            });
+        // [모바일 강제 활성화] 클릭 시 오디오 잠금 해제
+        startBtn.addEventListener('click', function() {
+            startSfx.play().catch(e => console.log("SFX 재생 안됨"));
+            bgm.play().catch(e => console.log("BGM 재생 안됨"));
 
-            // 배경음악도 즉시 play()를 호출하여 잠금 해제
-            bgm.play().then(() => {
-                console.log("BGM Success");
-            }).catch(err => {
-                console.log("BGM Fail", err);
-            });
-
-            // 그 다음 연출 시작
-            const overlay = document.getElementById('overlay');
             const overlayText = document.getElementById('overlayText');
             overlayText.classList.add('pop-out');
 
             setTimeout(() => {
-                overlay.classList.add('fade-out');
+                document.getElementById('overlay').classList.add('fade-out');
                 mainWrapper.style.display = 'flex';
                 document.body.classList.add('loaded');
-                setTimeout(() => { overlay.style.display = 'none'; }, 700);
+                setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 700);
             }, 800);
         });
 
-        volumeRange.addEventListener('input', (e) => {
-            bgm.volume = e.target.value;
-        });
+        volumeRange.addEventListener('input', (e) => { bgm.volume = e.target.value; });
 
         function showView(viewId) {
             document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
             if (viewId === 'view-home') {
                 navBar.classList.remove('active-nav');
                 mainWrapper.classList.remove('nav-padding');
@@ -203,8 +240,8 @@
                 navBar.classList.add('active-nav');
                 mainWrapper.classList.add('nav-padding');
             }
-            const targetView = document.getElementById(viewId);
-            targetView.classList.add('active');
+
+            document.getElementById(viewId).classList.add('active');
             const activeLink = document.querySelector(`.nav-link[onclick="showView('${viewId}')"]`);
             if(activeLink) activeLink.classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
