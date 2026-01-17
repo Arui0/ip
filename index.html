@@ -239,12 +239,13 @@
         });
 
         // 기타 데이터
-        const o_data = ["연습복:a", "트레이닝복:b", "사복:c", "속옷:d", "나체:e", "파자마:g", "무대의상1:h", "비키니:p", "메이드복:v"];
+        const o_data = ["연습복:a", "트레이닝복:b", "사복:c", "속옷:d", "나체:e", "속박:f", "파자마:g", "무대의상1:h", "무대의상2:i", "무대의상3:j", "무대의상4:k", "간호사복:l", "경찰복:m", "드레스:n", "바니걸:o", "비키니:p", "산타복:q", "정장:r", "올블랙정장:s", "웨딩드레스:t", "한복:u", "메이드복:v"];
         o_data.forEach(x => { const [n,c]=x.split(':'); document.getElementById('outfit-data').innerHTML += `<div style="background:#fdfdfd; padding:12px; border-radius:15px; border-left:5px solid var(--main-pink); display:flex; justify-content:space-between"><span>${n}</span><b>${c}</b></div>`; });
-        const c_data = ["!팬사이트:열람", "!커뮤:열람", "!위키:열람", "!기사:열람", "!피팅:확인"];
+        const c_data = ["!팬사이트:팬사이트를 확인합니다.", "!커뮤:DC 스타일 커뮤니티를 확인합니다.", "!위키:나무위키 스타일 사이트를 확인합니다.", "!기사:웹사이트 연예기사 스타일 사이트를 확인합니다.", "!피팅:의상 리스트를 확인합니다."];
         c_data.forEach(x => { const [n,d]=x.split(':'); document.getElementById('cmd-data').innerHTML += `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;"><b>${n}</b> : <span style="color:#888">${d}</span></div>`; });
 
         document.getElementById('volumeRange').addEventListener('input', (e) => bgm.volume = e.target.value);
     </script>
 </body>
 </html>
+
