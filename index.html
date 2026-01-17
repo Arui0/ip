@@ -13,13 +13,48 @@
             --soft-yellow: #FFF9C4;
             --text-color: #5D5D5D;
             --white: #ffffff;
+            /* 배경용 반투명 파스텔 컬러 */
+            --bg-pink: rgba(255, 209, 220, 0.5);
+            --bg-blue: rgba(174, 198, 207, 0.5);
+            --bg-purple: rgba(220, 208, 255, 0.5);
+            --bg-yellow: rgba(255, 249, 196, 0.5);
         }
 
-        /* --- 기본 스타일 --- */
+        /* --- 기본 스타일 (배경색 변경) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Jua', sans-serif; }
-        body { background-color: var(--main-pink); color: var(--text-color); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        body { background-color: var(--white); color: var(--text-color); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
         
-        /* --- 애니메이션 설정 --- */
+        /* --- [신규] 배경 애니메이션 스타일 --- */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* 콘텐츠 뒤로 배치 */
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(5px); /* 몽환적인 느낌 */
+        }
+        /* 동그라미 움직임 정의 */
+        @keyframes move1 { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(100px, -150px) rotate(180deg); } 100% { transform: translate(0, 0) rotate(360deg); } }
+        @keyframes move2 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-80px, 120px) scale(1.2); } 100% { transform: translate(0, 0) scale(1); } }
+        @keyframes move3 { 0% { transform: translate(0, 0); opacity: 0.4;} 50% { transform: translate(150px, 80px); opacity: 0.7;} 100% { transform: translate(0, 0); opacity: 0.4;} }
+
+        /* 개별 동그라미 설정 (위치, 크기, 색상, 애니메이션 속도) */
+        .bc1 { width: 200px; height: 200px; background: var(--bg-pink); top: 10%; left: 10%; animation: move1 25s infinite linear; }
+        .bc2 { width: 300px; height: 300px; background: var(--bg-blue); top: 60%; left: 80%; animation: move2 30s infinite ease-in-out; }
+        .bc3 { width: 150px; height: 150px; background: var(--bg-purple); top: 40%; left: 40%; animation: move3 20s infinite alternate; }
+        .bc4 { width: 250px; height: 250px; background: var(--bg-yellow); top: 80%; left: 20%; animation: move1 28s infinite linear reverse; }
+        .bc5 { width: 180px; height: 180px; background: var(--bg-pink); top: -50px; left: 60%; animation: move2 35s infinite ease-in-out -5s; }
+        .bc6 { width: 350px; height: 350px; background: var(--bg-blue); top: 30%; left: -100px; animation: move3 22s infinite alternate -10s; }
+
+
+        /* --- 기존 애니메이션 설정 --- */
         @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0) rotate(15deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
@@ -65,19 +100,24 @@
         .profile-img-box img { width: 100%; height: auto; display: block; object-fit: contain; }
 
         .profile-info { padding: 30px; }
-        .profile-info h3 { font-size: 2.3rem; color: #ff8fa3; margin-bottom: 15px; border-bottom: 2px solid #ffedf0; display: inline-block; }
+        .profile-info h3 { font-size: 2.3rem; color: #ff8fa3; margin-bottom: 10px; border-bottom: 2px solid #ffedf0; display: inline-block; }
         
-        /* 캐릭터 정보 병렬 배치 */
-        .stats-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .stat-item { background: #fff5f7; padding: 10px 18px; border-radius: 15px; font-size: 1.1rem; border-left: 6px solid var(--main-pink); white-space: nowrap; }
+        /* [핵심] 캐릭터 정보 병렬 텍스트 배치 */
+        .char-stats-text { 
+            font-size: 1.2rem; 
+            color: #888; 
+            margin-top: 5px; 
+            word-break: keep-all; 
+            line-height: 1.4;
+        }
         
-        .swap-btn { width: 100%; margin-top: 25px; padding: 15px; background: var(--main-pink); color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 1.3rem; transition: 0.2s; box-shadow: 0 5px 0 #ebb5c1; }
+        .swap-btn { width: 100%; margin-top: 20px; padding: 15px; background: var(--main-pink); color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 1.3rem; transition: 0.2s; box-shadow: 0 5px 0 #ebb5c1; }
 
-        /* --- 모바일 최적화 (글씨 크기 및 레이아웃) --- */
+        /* --- 모바일 최적화 --- */
         @media (max-width: 480px) {
-            .profile-info h3 { font-size: 1.8rem; }
-            .stat-item { font-size: 0.95rem; padding: 8px 12px; }
             .profile-info { padding: 20px; }
+            .profile-info h3 { font-size: 1.7rem; }
+            .char-stats-text { font-size: 1rem; color: #777; }
             .category-btn { font-size: 2.2rem !important; padding: 35px !important; }
             .profile-card { border-radius: 35px; border-width: 6px; }
         }
@@ -93,6 +133,15 @@
     </style>
 </head>
 <body>
+
+    <div class="animated-background">
+        <div class="bg-circle bc1"></div>
+        <div class="bg-circle bc2"></div>
+        <div class="bg-circle bc3"></div>
+        <div class="bg-circle bc4"></div>
+        <div class="bg-circle bc5"></div>
+        <div class="bg-circle bc6"></div>
+    </div>
 
     <div id="overlay">
         <div class="overlay-content" id="overlayText">
@@ -207,13 +256,13 @@
             document.getElementById('char-step-category').classList.add('active');
         }
 
-        // [메인 캐릭터 데이터 - 이수아 21세 수정]
+        // [메인 캐릭터 데이터 - 정보 병렬화 유지]
         const mainIdols = [
-            {id:"m1", n:"임유리", m:"ISTJ", h:"168cm", b:"C컵", a:21, i1:"c11.webp", i2:"c12.webp"},
-            {id:"m2", n:"강시유", m:"ENFP", h:"162cm", b:"E컵", a:20, i1:"c21.webp", i2:"c22.webp"},
-            {id:"m3", n:"강예은", m:"INFP", h:"164cm", b:"B컵", a:21, i1:"c31.webp", i2:"c32.webp"},
-            {id:"m4", n:"정보라", m:"ESTP", h:"162cm", b:"A컵", a:20, i1:"c41.webp", i2:"c42.webp"},
-            {id:"m5", n:"이수아", m:"INTP", h:"170cm", b:"F컵", a:21, i1:"c51.webp", i2:"c52.webp"}
+            {id:"m1", n:"임유리", a:21, info:"ISTJ · 168cm · C컵", i1:"c11.webp", i2:"c12.webp"},
+            {id:"m2", n:"강시유", a:20, info:"ENFP · 162cm · E컵", i1:"c21.webp", i2:"c22.webp"},
+            {id:"m3", n:"강예은", a:21, info:"INFP · 164cm · B컵", i1:"c31.webp", i2:"c32.webp"},
+            {id:"m4", n:"정보라", a:20, info:"ESTP · 162cm · A컵", i1:"c41.webp", i2:"c42.webp"},
+            {id:"m5", n:"이수아", a:21, info:"INTP · 170cm · F컵", i1:"c51.webp", i2:"c52.webp"}
         ];
         
         const mainList = document.getElementById('main-list-container');
@@ -223,37 +272,32 @@
                     <div class="profile-img-box"><img id="${m.id}" src="${m.i1}"></div>
                     <div class="profile-info">
                         <h3>${m.n} (${m.a})</h3>
-                        <div class="stats-grid">
-                            <span class="stat-item">${m.m}</span>
-                            <span class="stat-item">${m.h}</span>
-                            <span class="stat-item">${m.b}</span>
-                        </div>
+                        <div class="char-stats-text">${m.info}</div>
                         <button class="swap-btn" onclick="swap('${m.id}','${m.i1}','${m.i2}')">의상 체인지! ✨</button>
                     </div>
                 </div>`;
         });
 
-        // [서브 캐릭터 데이터 전체 복구]
+        // [서브 캐릭터 데이터 - 정보 병렬화 유지]
         const subs = [
-            {n:"펠리아", r:"비서", a:30, i:"001.webp"}, {n:"남기욱", r:"재벌", a:32, i:"002.webp"}, {n:"박승철", r:"촬영 감독", a:39, i:"003.webp"},
-            {n:"양정식", r:"CEO", a:50, i:"004.webp"}, {n:"방울개", r:"작곡가", a:"?", i:"005.webp"}, {n:"루이 김", r:"디자이너", a:36, i:"006.webp"},
-            {n:"엘리아", r:"EXIA", a:21, i:"007.webp"}, {n:"티라", r:"EXIA", a:21, i:"008.webp"}, {n:"파란", r:"EXIA", a:20, i:"009.webp"},
-            {n:"가을", r:"EXIA", a:20, i:"010.webp"}, {n:"헤라", r:"EXIA", a:21, i:"011.webp"}, {n:"시우", r:"VIA:VOID", a:21, i:"012.webp"},
-            {n:"베니", r:"VIA:VOID", a:22, i:"013.webp"}, {n:"로먼", r:"VIA:VOID", a:20, i:"014.webp"}, {n:"주안", r:"VIA:VOID", a:20, i:"015.webp"},
-            {n:"아키", r:"VIA:VOID", a:22, i:"016.webp"}, {n:"여자팬", r:"EXTRA", a:"", i:"017.webp"}, {n:"남자팬", r:"EXTRA", a:"", i:"018.webp"},
-            {n:"사생팬", r:"EXTRA", a:"", i:"019.webp"}, {n:"열성팬", r:"EXTRA", a:"", i:"020.webp"}
+            {n:"펠리아", a:30, info:"비서 / 여자", i:"001.webp"}, {n:"남기욱", a:32, info:"재벌 / 남자", i:"002.webp"}, {n:"박승철", a:39, info:"촬영 감독 / 남자", i:"003.webp"},
+            {n:"양정식", a:50, info:"루이브 기획사 CEO / 남자", i:"004.webp"}, {n:"방울개", a:"?", info:"작곡가 / 남자", i:"005.webp"}, {n:"루이 김", a:36, info:"디자이너 / 남자", i:"006.webp"},
+            {n:"엘리아", a:21, info:"EXIA 멤버 / 여자", i:"007.webp"}, {n:"티라", a:21, info:"EXIA 멤버 / 여자", i:"008.webp"}, {n:"파란", a:20, info:"EXIA 멤버 / 여자", i:"009.webp"},
+            {n:"가을", a:20, info:"EXIA 멤버 / 여자", i:"010.webp"}, {n:"헤라", a:21, info:"EXIA 멤버 / 여자", i:"011.webp"}, {n:"시우", a:21, info:"VIA:VOID 멤버 / 남자", i:"012.webp"},
+            {n:"베니", a:22, info:"VIA:VOID 멤버 / 남자", i:"013.webp"}, {n:"로먼", a:20, info:"VIA:VOID 멤버 / 남자", i:"014.webp"}, {n:"주안", a:20, info:"VIA:VOID 멤버 / 남자", i:"015.webp"},
+            {n:"아키", a:22, info:"VIA:VOID 멤버 / 남자", i:"016.webp"}, {n:"여자팬", a:"", info:"엑스트라", i:"017.webp"}, {n:"남자팬", a:"", info:"엑스트라", i:"018.webp"},
+            {n:"사생팬", a:"", info:"엑스트라", i:"019.webp"}, {n:"열성팬", a:"", info:"엑스트라", i:"020.webp"}
         ];
         const subList = document.getElementById('sub-list-container');
         subs.forEach(s => {
             const ageStr = s.a ? `(${s.a})` : '';
-            subList.innerHTML += `<div class="profile-card" style="border-color:var(--main-blue)"><div class="profile-img-box"><img src="${s.i}"></div><div class="profile-info"><h3 style="color:#6a89cc">${s.n} ${ageStr}</h3><div class="stats-grid"><span class="stat-item" style="border-left-color:var(--main-blue)">${s.r}</span></div></div></div>`;
+            subList.innerHTML += `<div class="profile-card" style="border-color:var(--main-blue)"><div class="profile-img-box"><img src="${s.i}"></div><div class="profile-info"><h3 style="color:#6a89cc">${s.n} ${ageStr}</h3><div class="char-stats-text" style="color:#6a89cc">${s.info}</div></div></div>`;
         });
 
-        // [의상 데이터 전체 복구]
+        // [원본 데이터 복구 유지]
         const o_data = ["연습복:a", "트레이닝복:b", "사복:c", "속옷:d", "나체:e", "속박:f", "파자마:g", "무대의상1:h", "무대의상2:i", "무대의상3:j", "무대의상4:k", "간호사복:l", "경찰복:m", "드레스:n", "바니걸:o", "비키니:p", "산타복:q", "수트:r", "올블랙정장:s", "웨딩드레스:t", "한복:u", "메이드복:v"];
         o_data.forEach(x => { const [n,c]=x.split(':'); document.getElementById('outfit-data').innerHTML += `<div style="background:#fdfdfd; padding:10px; border-radius:15px; border-left:5px solid var(--main-pink); display:flex; justify-content:space-between"><span>${n}</span><b>${c}</b></div>`; });
         
-        // [명령어 데이터 전체 복구]
         const c_data = ["!팬사이트:팬 사이트 열람", "!커뮤:커뮤니티 열람", "!위키:위키 열람", "!기사:기사 열람", "!SNS:SNS 열람", "!피팅:의상 확인", "!이미지:디버그"];
         c_data.forEach(x => { const [n,d]=x.split(':'); document.getElementById('cmd-data').innerHTML += `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;"><b>${n}</b> : <span style="color:#888">${d}</span></div>`; });
 
