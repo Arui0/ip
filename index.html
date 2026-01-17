@@ -54,11 +54,10 @@
         .menu-grid { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; width: 100%; }
         .menu-img-btn { position: relative; width: 260px; cursor: pointer; border-radius: 30px; overflow: hidden; transition: transform 0.3s; }
         .menu-img-btn img { width: 100%; height: auto; display: block; }
-        .menu-img-btn:hover { transform: scale(1.05); }
 
         /* --- 캐릭터 프로필 카드 스타일 --- */
         .profile-list { display: flex; flex-direction: column; gap: 50px; width: 100%; align-items: center; margin-top: 30px; }
-        .profile-card { width: 100%; max-width: 550px; background: white; border-radius: 50px; border: 8px solid var(--main-pink); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); text-align: left; margin-bottom: 20px; }
+        .profile-card { width: 100%; max-width: 550px; background: white; border-radius: 50px; border: 8px solid var(--main-pink); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); text-align: left; }
         .profile-img-box { width: 100%; height: 450px; background: #fffcfd; position: relative; overflow: hidden; border-bottom: 8px solid var(--main-pink); }
         .profile-img-box img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s; }
         .profile-info { padding: 35px; }
@@ -75,9 +74,6 @@
         .volume-container { position: fixed; bottom: 25px; right: 25px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(8px); padding: 12px 25px; border-radius: 40px; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); z-index: 100; border: 3px solid var(--main-pink); opacity: 0; transition: 1s; }
         body.loaded .volume-container { opacity: 1; }
         #muteBtn { cursor: pointer; font-size: 1.5rem; }
-
-        /* 서브 캐릭터 섹션 그룹 제목 */
-        .sub-group-title { font-size: 2rem; color: var(--main-blue); margin: 40px 0 20px; padding: 10px; border-bottom: 3px dashed var(--main-blue); width: 100%; }
     </style>
 </head>
 <body>
@@ -133,61 +129,52 @@
                 <div class="profile-list">
                     <div class="profile-card">
                         <div class="profile-img-box"><img id="img-yuri" src="c11.webp"></div>
-                        <div class="profile-info"><h3>임유리 (21)</h3><div class="stats-grid"><div class="stat-item">MBTI: ISTJ</div><div class="stat-item">키: 168cm</div></div></div>
+                        <div class="profile-info">
+                            <h3>임유리 (21)</h3>
+                            <div class="stats-grid"><div class="stat-item">MBTI: ISTJ</div><div class="stat-item">키: 168cm</div><div class="stat-item">체형: C컵</div></div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-yuri', 'c11.webp', 'c12.webp')">의상 체인지! ✨</button>
+                        </div>
                     </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-siyu" src="c21.webp"></div>
+                        <div class="profile-info">
+                            <h3>강시유 (20)</h3>
+                            <div class="stats-grid"><div class="stat-item">MBTI: ENFP</div><div class="stat-item">키: 162cm</div><div class="stat-item">체형: E컵</div></div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-siyu', 'c21.webp', 'c22.webp')">의상 체인지! ✨</button>
+                        </div>
                     </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-yeeun" src="c31.webp"></div>
+                        <div class="profile-info">
+                            <h3>강예은 (21)</h3>
+                            <div class="stats-grid"><div class="stat-item">MBTI: INFP</div><div class="stat-item">키: 164cm</div><div class="stat-item">체형: B컵</div></div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-yeeun', 'c31.webp', 'c32.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-bora" src="c41.webp"></div>
+                        <div class="profile-info">
+                            <h3>정보라 (20)</h3>
+                            <div class="stats-grid"><div class="stat-item">MBTI: ESTP</div><div class="stat-item">키: 162cm</div><div class="stat-item">체형: A컵</div></div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-bora', 'c41.webp', 'c42.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-sua" src="c51.webp"></div>
+                        <div class="profile-info">
+                            <h3>이수아 (20)</h3>
+                            <div class="stats-grid"><div class="stat-item">MBTI: INTP</div><div class="stat-item">키: 170cm</div><div class="stat-item">체형: F컵</div></div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-sua', 'c51.webp', 'c52.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
+                </div>
                 <button class="back-btn" onclick="closeCharDetail()">카테고리로</button>
             </div>
 
             <div id="char-detail-sub" class="char-detail-view content-box" style="display:none; border-color: var(--main-blue);">
                 <h2 style="color: var(--main-blue); margin-bottom: 30px; font-size: 2.5rem;">✨ SUB CHARACTERS</h2>
-                
-                <div class="profile-list">
-                    <div class="sub-group-title">🏢 루이브 기획사 스태프</div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="004.webp"></div>
-                        <div class="profile-info"><h3>양정식 (50)</h3><div class="stat-item">루이브 기획사 CEO</div></div>
+                <div class="profile-list" id="sub-char-list">
                     </div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="001.webp"></div>
-                        <div class="profile-info"><h3>펠리아 (30)</h3><div class="stat-item">완벽한 비서</div></div>
-                    </div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="002.webp"></div>
-                        <div class="profile-info"><h3>남기욱 (32)</h3><div class="stat-item">재벌 / 투자자</div></div>
-                    </div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="006.webp"></div>
-                        <div class="profile-info"><h3>루이 김 (36)</h3><div class="stat-item">디자이너</div></div>
-                    </div>
-
-                    <div class="sub-group-title">🎤 EXIA 멤버</div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="007.webp"></div>
-                        <div class="profile-info"><h3>엘리아 (21)</h3><div class="stat-item">EXIA 멤버</div></div>
-                    </div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="008.webp"></div>
-                        <div class="profile-info"><h3>티라 (21)</h3><div class="stat-item">EXIA 멤버</div></div>
-                    </div>
-
-                    <div class="sub-group-title">🌌 VIA:VOID 멤버</div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="012.webp"></div>
-                        <div class="profile-info"><h3>시우 (21)</h3><div class="stat-item">VIA:VOID 리더</div></div>
-                    </div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="013.webp"></div>
-                        <div class="profile-info"><h3>베니 (22)</h3><div class="stat-item">VIA:VOID 멤버</div></div>
-                    </div>
-
-                    <div class="sub-group-title">📣 팬덤 (Fandom)</div>
-                    <div class="profile-card" style="border-color:var(--main-blue)">
-                        <div class="profile-img-box"><img src="020.webp"></div>
-                        <div class="profile-info"><h3>열성팬</h3><div class="stat-item">응원봉 장전 완료!</div></div>
-                    </div>
-                </div>
-
                 <button class="back-btn" onclick="closeCharDetail()" style="background: var(--main-blue);">카테고리로</button>
             </div>
         </div>
@@ -209,6 +196,12 @@
 
         function playClick() { clickSfx.currentTime = 0; clickSfx.play().catch(e=>{}); }
 
+        function swapOutfit(imgId, original, alt) {
+            playClick();
+            const img = document.getElementById(imgId);
+            img.src = img.src.includes(original) ? alt : original;
+        }
+
         document.getElementById('startBtn').addEventListener('click', function() {
             playClick(); startSfx.play(); bgm.play();
             document.getElementById('overlayText').classList.add('pop-out');
@@ -220,21 +213,12 @@
             }, 800);
         });
 
-        volumeRange.addEventListener('input', (e) => { bgm.volume = e.target.value; });
-        muteBtn.addEventListener('click', () => {
-            bgm.muted = !bgm.muted;
-            muteBtn.innerText = bgm.muted ? '🔇' : '🎵';
-            playClick();
-        });
-
         function showView(viewId) {
             playClick();
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
             if (viewId === 'view-home') { navBar.classList.remove('active-nav'); mainWrapper.classList.remove('nav-padding'); }
             else { navBar.classList.add('active-nav'); mainWrapper.classList.add('nav-padding'); }
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function openCharDetail(type) {
@@ -242,7 +226,6 @@
             document.getElementById('char-category-view').style.display = 'none';
             document.querySelectorAll('.char-detail-view').forEach(v => v.style.display = 'none');
             document.getElementById('char-detail-' + type).style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function closeCharDetail() {
@@ -251,12 +234,30 @@
             document.getElementById('char-category-view').style.display = 'block';
         }
 
-        // 초기 데이터 삽입 (기존 데이터)
-        const outfits = ["연습복:a", "트레이닝복:b", "사복:c", "속옷:d", "나체:e", "무대의상1:h", "바니걸:o", "비키니:p", "메이드복:v"];
-        const outfitGrid = document.getElementById('outfit-list-data');
-        outfits.forEach(o => {
-            const [name, code] = o.split(':');
-            outfitGrid.innerHTML += `<div class="stat-item" style="margin:5px; display:inline-block;">${name} (${code})</div>`;
+        // 서브 캐릭터 데이터 20명 전원
+        const subChars = [
+            {n:"펠리아 (비서)", a:"30", i:"001.webp"}, {n:"남기욱 (재벌)", a:"32", i:"002.webp"},
+            {n:"박승철 (촬영 감독)", a:"39", i:"003.webp"}, {n:"양정식 (CEO)", a:"50", i:"004.webp"},
+            {n:"방울개 (작곡가)", a:"?", i:"005.webp"}, {n:"루이 김 (디자이너)", a:"36", i:"006.webp"},
+            {n:"엘리아 (EXIA)", a:"21", i:"007.webp"}, {n:"티라 (EXIA)", a:"21", i:"008.webp"},
+            {n:"파란 (EXIA)", a:"20", i:"009.webp"}, {n:"가을 (EXIA)", a:"20", i:"010.webp"},
+            {n:"헤라 (EXIA)", a:"21", i:"011.webp"}, {n:"시우 (VIA:VOID)", a:"21", i:"012.webp"},
+            {n:"베니 (VIA:VOID)", a:"22", i:"013.webp"}, {n:"로먼 (VIA:VOID)", a:"20", i:"014.webp"},
+            {n:"주안 (VIA:VOID)", a:"20", i:"015.webp"}, {n:"아키 (VIA:VOID)", a:"22", i:"016.webp"},
+            {n:"여자팬 (엑스트라)", a:"-", i:"017.webp"}, {n:"남자팬 (엑스트라)", a:"-", i:"018.webp"},
+            {n:"사생팬 (엑스트라)", a:"-", i:"019.webp"}, {n:"열성팬 (엑스트라)", a:"-", i:"020.webp"}
+        ];
+
+        const subList = document.getElementById('sub-char-list');
+        subChars.forEach(c => {
+            subList.innerHTML += `
+                <div class="profile-card" style="border-color: var(--main-blue)">
+                    <div class="profile-img-box"><img src="${c.i}"></div>
+                    <div class="profile-info">
+                        <h3>${c.n}</h3>
+                        <div class="stats-grid"><div class="stat-item" style="border-color:var(--main-blue)">나이: ${c.a}세</div></div>
+                    </div>
+                </div>`;
         });
     </script>
 </body>
