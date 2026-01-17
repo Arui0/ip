@@ -9,6 +9,8 @@
         :root {
             --main-pink: #FFD1DC;
             --main-blue: #AEC6CF;
+            --main-purple: #DCD0FF;
+            --soft-yellow: #FFF9C4;
             --text-color: #5D5D5D;
             --white: #ffffff;
         }
@@ -17,158 +19,305 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Jua', sans-serif; }
         body { background-color: var(--main-pink); color: var(--text-color); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
         
+        /* --- 애니메이션 --- */
         @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0) rotate(15deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-40px); } }
+        @keyframes flashEffect { 0% { opacity: 0; } 50% { opacity: 0.8; background: rgba(255, 255, 255, 0.9); } 100% { opacity: 0; } }
 
         /* --- 진입 오버레이 --- */
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
-        #overlay.fade-out { display: none; }
-        .start-btn { padding: 15px 40px; font-size: 2rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 0 #89a3ad; margin-top: 20px; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; transition: background 0.6s ease-in-out; }
+        #overlay.fade-out { background: transparent; pointer-events: none; }
+        .overlay-content { text-align: center; transform-origin: center center; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .pop-out { animation: popOut 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+        .start-btn { padding: 22px 50px; font-size: 2.3rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 0 #89a3ad; transition: all 0.2s ease; margin-top: 30px; -webkit-tap-highlight-color: transparent; }
+        
+        /* [수정] 시작 화면 로고 크기 확대 */
+        .start-logo-img { width: 85%; max-width: 650px; height: auto; margin-bottom: 20px; }
 
         /* --- 내비게이션 바 --- */
-        nav { position: fixed; top: -100px; left: 0; width: 100%; height: 60px; background: rgba(255, 255, 255, 0.9); display: flex; justify-content: center; align-items: center; gap: 15px; z-index: 1000; border-bottom: 3px solid var(--main-blue); transition: 0.4s; }
-        nav.active-nav { top: 0; }
-        .nav-link { padding: 5px 12px; border-radius: 15px; cursor: pointer; color: var(--main-blue); font-size: 1.1rem; }
+        nav { position: fixed; top: -100px; left: 0; width: 100%; height: 70px; background: rgba(255, 255, 255, 0.85); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; border-bottom: 4px solid var(--main-blue); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; }
+        nav.active-nav { top: 0; opacity: 1; pointer-events: auto; }
+        .nav-link { padding: 8px 18px; border-radius: 20px; cursor: pointer; color: var(--main-blue); font-size: 1.2rem; transition: all 0.2s; }
         .nav-link.active { background: var(--main-blue); color: white; }
 
         /* --- 메인 영역 --- */
-        #main-wrapper { width: 100%; max-width: 900px; padding-top: 40px; display: none; flex-direction: column; align-items: center; }
-        #main-wrapper.nav-padding { padding-top: 80px; }
-        .view { display: none; width: 100%; animation: popIn 0.5s forwards; padding: 15px; }
+        #main-wrapper { width: 100%; max-width: 1000px; padding-top: 50px; display: none; flex-direction: column; align-items: center; transition: padding-top 0.5s ease; }
+        #main-wrapper.nav-padding { padding-top: 100px; }
+        .view { display: none; width: 100%; animation: popIn 0.6s forwards; padding: 20px; }
         .view.active { display: flex; flex-direction: column; align-items: center; }
 
-        /* --- 캐릭터 카드 (공통) --- */
-        .profile-list { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; }
-        .profile-card { width: 100%; max-width: 500px; background: white; border-radius: 30px; border: 5px solid var(--main-pink); overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-        .profile-img-box { width: 100%; height: 350px; background: #fffcfd; border-bottom: 5px solid var(--main-pink); }
-        .profile-img-box img { width: 100%; height: 100%; object-fit: contain; }
-        .profile-info { padding: 20px; }
-        .profile-info h3 { font-size: 1.8rem; color: #ff8fa3; margin-bottom: 8px; }
+        /* --- 홈 로고 & 메뉴 --- */
+        .home-logo { text-align: center; margin-bottom: 50px; display: flex; flex-direction: column; align-items: center; width: 100%; }
+        /* [수정] 메인 화면 로고 크기 확대 */
+        .main-logo-img { width: 95%; max-width: 750px; height: auto; margin-bottom: 20px; animation: bounce 2s infinite; }
+        .info-tag { font-size: 1.1rem; color: white; background: rgba(0,0,0,0.1); padding: 5px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; }
+        .menu-grid { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; width: 100%; }
+        .menu-img-btn { position: relative; width: 260px; cursor: pointer; border-radius: 30px; overflow: hidden; transition: transform 0.3s; }
+        .menu-img-btn img { width: 100%; height: auto; display: block; }
+        .menu-img-btn:hover { transform: scale(1.05); }
+        .menu-img-btn::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; opacity: 0; pointer-events: none; }
+        .menu-img-btn:active::after { animation: flashEffect 0.4s ease-out; }
 
-        /* --- SUB 전용 스타일 (여백 및 라벨 제거) --- */
-        .sub-card { border-color: var(--main-blue); max-width: 450px; }
-        .sub-card .profile-img-box { height: 280px; border-bottom: 4px solid var(--main-blue); }
-        .sub-card .profile-info { padding: 12px 20px; text-align: center; }
-        .sub-text { font-size: 1.1rem; color: #888; margin-top: 2px; }
+        /* --- 캐릭터 프로필 카드 스타일 --- */
+        .profile-list { display: flex; flex-direction: column; gap: 50px; width: 100%; align-items: center; margin-top: 30px; }
+        .profile-card { width: 100%; max-width: 550px; background: white; border-radius: 50px; border: 8px solid var(--main-pink); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); text-align: left; }
+        .profile-img-box { width: 100%; height: 450px; background: #fffcfd; position: relative; overflow: hidden; border-bottom: 8px solid var(--main-pink); }
+        .profile-img-box img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s; }
+        .profile-info { padding: 35px; }
+        .profile-info h3 { font-size: 2.5rem; color: #ff8fa3; margin-bottom: 15px; border-bottom: 2px solid #ffedf0; display: inline-block; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .stat-item { background: #fff5f7; padding: 12px 20px; border-radius: 20px; font-size: 1.2rem; border-left: 6px solid var(--main-pink); }
+        .outfit-swap-btn { width: 100%; margin-top: 25px; padding: 15px; background: var(--main-pink); color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 1.3rem; transition: 0.2s; box-shadow: 0 5px 0 #ebb5c1; }
+        .outfit-swap-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #ebb5c1; }
 
-        /* --- 버튼 및 박스 --- */
-        .content-box { width: 100%; background: var(--white); padding: 30px 15px; border-radius: 35px; border: 6px solid var(--main-pink); margin-bottom: 30px; }
-        .back-btn { margin-top: 20px; padding: 10px 30px; background: var(--main-pink); color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 1.1rem; }
+        /* --- 콘텐츠 박스 공통 --- */
+        .content-box { width: 100%; max-width: 850px; background: var(--white); padding: 50px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+        .list-group h3 { background: var(--main-blue); color: white; display: inline-block; padding: 6px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 1.4rem; margin-top: 10px; }
+        .outfit-notice { background: #fff0f3; color: #d88a9a; padding: 15px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 1.1rem; border: 2px dashed var(--main-pink); }
+        .outfit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; width: 100%; }
+        .list-item { background: #fdfdfd; padding: 12px 18px; border-radius: 20px; border-left: 8px solid var(--main-pink); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; }
+        .item-info { flex-grow: 1; display: flex; justify-content: space-between; align-items: center; }
+
+        /* --- 볼륨 조절 --- */
+        .volume-container { position: fixed; bottom: 25px; right: 25px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(8px); padding: 12px 25px; border-radius: 40px; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); z-index: 100; border: 3px solid var(--main-pink); opacity: 0; transition: 1s; }
+        body.loaded .volume-container { opacity: 1; }
+        #muteBtn { cursor: pointer; font-size: 1.5rem; }
+
+        .back-btn { margin-top: 30px; padding: 12px 40px; background: var(--main-pink); color: white; border: none; border-radius: 35px; cursor: pointer; font-size: 1.3rem; }
 
         /* --- 모바일 최적화 --- */
+        @media (max-width: 768px) {
+            .menu-img-btn { width: 100%; max-width: 350px; }
+            /* [수정] 태블릿 로고 크기 확대 */
+            .main-logo-img { max-width: 550px; }
+            .char-banner { height: 120px; font-size: 2.2rem; }
+        }
         @media (max-width: 480px) {
-            .profile-info h3 { font-size: 1.4rem; }
-            .sub-text { font-size: 0.95rem; }
-            .profile-img-box { height: 250px; }
-            .sub-card .profile-img-box { height: 220px; }
-            .nav-link { font-size: 0.9rem; padding: 4px 8px; }
+            .home-logo p { font-size: 1.2rem; }
+            .start-btn { font-size: 1.8rem; padding: 15px 40px; }
+            .content-box { padding: 30px 15px; }
+            .outfit-grid { grid-template-columns: 1fr; }
+            /* [수정] 모바일 로고 크기 확대 */
+            .main-logo-img { max-width: 350px; }
+            .profile-img-box { height: 350px; }
+            .profile-info h3 { font-size: 2rem; }
+            .stat-item { font-size: 1rem; padding: 10px; }
         }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <div class="overlay-content">
-            <img src="logo.webp" alt="로고" style="width:80%; max-width:500px;">
-            <br>
+        <div class="overlay-content" id="overlayText">
+            <img src="logo.webp" alt="아이돌 플래너 로고" class="start-logo-img">
             <button class="start-btn" id="startBtn">START!</button>
         </div>
     </div>
 
     <nav id="nav-bar">
         <div class="nav-link" onclick="showView('view-home')">HOME</div>
-        <div class="nav-link" onclick="showView('view-char')">캐릭터</div>
-        <div class="nav-link" onclick="showView('view-outfit')">의상</div>
-        <div class="nav-link" onclick="showView('view-cmd')">명령어</div>
+        <div class="nav-link" onclick="showView('view-char')">캐릭터 목록</div>
+        <div class="nav-link" onclick="showView('view-outfit')">의상 목록</div>
+        <div class="nav-link" onclick="showView('view-cmd')">명령어 목록</div>
     </nav>
 
-    <audio id="bgm" loop><source src="cute_bgm.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm" loop preload="auto"><source src="cute_bgm.mp3" type="audio/mpeg"></audio>
+    <audio id="startSfx" preload="auto"><source src="inside.mp3" type="audio/mpeg"></audio>
+    <audio id="clickSfx" preload="auto"><source src="click.mp3" type="audio/mpeg"></audio>
+
+    <div class="volume-container">
+        <span id="muteBtn">🎵</span>
+        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.6">
+    </div>
 
     <main id="main-wrapper">
         <div id="view-home" class="view active">
-            <div style="text-align:center;">
-                <img src="logo.webp" alt="로고" style="width:90%; max-width:600px; margin-bottom:20px;">
-                <div style="background:var(--white); padding:20px; border-radius:20px; border:4px solid var(--main-pink); cursor:pointer;" onclick="showView('view-char')"><h2>캐릭터 목록 보기</h2></div>
+            <div class="home-logo">
+                <img src="logo.webp" alt="아이돌 플래너 로고" class="main-logo-img">
+                <div class="info-tag">제작자: 아루이 / 플랫폼: 크랙</div>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-img-btn" onclick="showView('view-char')"><img src="a.png" alt="캐릭터"></div>
+                <div class="menu-img-btn" onclick="showView('view-outfit')"><img src="c.png" alt="의상"></div>
+                <div class="menu-img-btn" onclick="showView('view-cmd')"><img src="b.png" alt="명령어"></div>
             </div>
         </div>
 
         <div id="view-char" class="view">
-            <div id="char-category-view" class="content-box" style="text-align:center;">
-                <h2 style="color: var(--main-pink); margin-bottom: 20px;">카테고리 선택</h2>
-                <div style="background: var(--main-pink); padding:20px; border-radius:20px; color:white; font-size:1.5rem; cursor:pointer; margin-bottom:10px;" onclick="openCharDetail('main')">MAIN IDOLS</div>
-                <div style="background: var(--main-blue); padding:20px; border-radius:20px; color:white; font-size:1.5rem; cursor:pointer;" onclick="openCharDetail('sub')">SUB CHARACTERS</div>
+            <div id="char-category-view" class="content-box">
+                <h2 style="color: var(--main-pink); margin-bottom: 30px; font-size: 2.8rem;">💖 캐릭터 목록</h2>
+                <div class="char-category-grid">
+                    <div class="char-banner main-banner" style="background: var(--main-pink); height:150px; border-radius:30px; display:flex; align-items:center; justify-content:center; color:white; font-size:3rem; cursor:pointer;" onclick="openCharDetail('main')">MAIN</div>
+                    <div class="char-banner sub-banner" style="background: var(--main-blue); height:150px; border-radius:30px; display:flex; align-items:center; justify-content:center; color:white; font-size:3rem; cursor:pointer; margin-top:20px;" onclick="openCharDetail('sub')">SUB</div>
+                </div>
                 <button class="back-btn" onclick="showView('view-home')">메인으로</button>
             </div>
 
-            <div id="char-detail-main" class="char-detail-view content-box" style="display:none; text-align:center;">
-                <h2 style="color: var(--main-pink); margin-bottom:15px;">🌟 MAIN</h2>
+            <div id="char-detail-main" class="char-detail-view content-box">
+                <h2 style="color: var(--main-pink); margin-bottom: 10px; font-size: 2.8rem;">🌟 MAIN IDOLS</h2>
                 <div class="profile-list">
-                    <div class="profile-card"><div class="profile-img-box"><img src="c11.webp"></div><div class="profile-info"><h3>임유리 (21)</h3><p>ISTJ / 168cm</p></div></div>
-                    <div class="profile-card"><div class="profile-img-box"><img src="c21.webp"></div><div class="profile-info"><h3>강시유 (20)</h3><p>ENFP / 162cm</p></div></div>
-                    <div class="profile-card"><div class="profile-img-box"><img src="c31.webp"></div><div class="profile-info"><h3>강예은 (21)</h3><p>INFP / 164cm</p></div></div>
-                    <div class="profile-card"><div class="profile-img-box"><img src="c41.webp"></div><div class="profile-info"><h3>정보라 (20)</h3><p>ESTP / 162cm</p></div></div>
-                    <div class="profile-card"><div class="profile-img-box"><img src="c51.webp"></div><div class="profile-info"><h3>이수아 (21)</h3><p>INTP / 170cm</p></div></div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-yuri" src="c11.webp"></div>
+                        <div class="profile-info">
+                            <h3>임유리 (21)</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">MBTI: ISTJ</div>
+                                <div class="stat-item">키: 168cm</div>
+                                <div class="stat-item">체형: C컵</div>
+                            </div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-yuri', 'c11.webp', 'c12.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-siyu" src="c21.webp"></div>
+                        <div class="profile-info">
+                            <h3>강시유 (20)</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">MBTI: ENFP</div>
+                                <div class="stat-item">키: 162cm</div>
+                                <div class="stat-item">체형: E컵</div>
+                            </div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-siyu', 'c21.webp', 'c22.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-yeeun" src="c31.webp"></div>
+                        <div class="profile-info">
+                            <h3>강예은 (21)</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">MBTI: INFP</div>
+                                <div class="stat-item">키: 164cm</div>
+                                <div class="stat-item">체형: B컵</div>
+                            </div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-yeeun', 'c31.webp', 'c32.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-bora" src="c41.webp"></div>
+                        <div class="profile-info">
+                            <h3>정보라 (20)</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">MBTI: ESTP</div>
+                                <div class="stat-item">키: 162cm</div>
+                                <div class="stat-item">체형: A컵</div>
+                            </div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-bora', 'c41.webp', 'c42.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-img-box"><img id="img-sua" src="c51.webp"></div>
+                        <div class="profile-info">
+                            <h3>이수아 (20)</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">MBTI: INTP</div>
+                                <div class="stat-item">키: 170cm</div>
+                                <div class="stat-item">체형: F컵</div>
+                            </div>
+                            <button class="outfit-swap-btn" onclick="swapOutfit('img-sua', 'c51.webp', 'c52.webp')">의상 체인지! ✨</button>
+                        </div>
+                    </div>
                 </div>
-                <button class="back-btn" onclick="closeCharDetail()">뒤로가기</button>
+                <button class="back-btn" onclick="closeCharDetail()">카테고리로</button>
             </div>
 
-            <div id="char-detail-sub" class="char-detail-view content-box" style="display:none; border-color: var(--main-blue); text-align:center;">
-                <h2 style="color: var(--main-blue); margin-bottom:15px;">✨ SUB</h2>
-                <div class="profile-list" id="sub-char-list"></div>
-                <button class="back-btn" onclick="closeCharDetail()" style="background:var(--main-blue)">뒤로가기</button>
+            <div id="char-detail-sub" class="char-detail-view content-box" style="border-color: var(--main-blue);">
+                <h2 style="color: var(--main-blue); margin-bottom: 30px; font-size: 2.5rem;">✨ SUB IDOLS</h2>
+                <p style="font-size: 1.5rem; color: #888;">준비 중입니다...</p>
+                <button class="back-btn" onclick="closeCharDetail()" style="background: var(--main-blue);">카테고리로</button>
             </div>
         </div>
 
-        <div id="view-outfit" class="view"><div class="content-box" style="text-align:center;"><h2>👗 준비 중</h2><button class="back-btn" onclick="showView('view-home')">메인으로</button></div></div>
-        <div id="view-cmd" class="view"><div class="content-box" style="text-align:center;"><h2>⌨️ 준비 중</h2><button class="back-btn" onclick="showView('view-home')">메인으로</button></div></div>
+        <div id="view-outfit" class="view"><div class="content-box"><h2 style="color:#ecbd00; font-size:2.8rem; margin-bottom:20px;">👗 의상 목록</h2><div class="outfit-notice">✨ 알파벳은 링크에 사용되는 의상코드를 의미합니다! ✨</div><div class="outfit-grid" id="outfit-list-data"></div><button class="back-btn" onclick="showView('view-home')" style="background:#ecbd00">메인으로</button></div></div>
+        <div id="view-cmd" class="view"><div class="content-box"><h2 style="color:var(--main-blue); font-size:2.8rem; margin-bottom:40px;">⌨️ 명령어 목록</h2><div id="cmd-list-data" style="text-align:left;"></div><button class="back-btn" onclick="showView('view-home')" style="background:var(--main-blue)">메인으로</button></div></div>
+
+        <footer style="color:white; padding: 60px 0;">&copy; 2026 Idol Planner Project. All Rights Reserved.</footer>
     </main>
 
     <script>
-        const mainWrapper = document.getElementById('main-wrapper');
+        const bgm = document.getElementById('bgm');
+        const startSfx = document.getElementById('startSfx');
+        const clickSfx = document.getElementById('clickSfx');
+        const volumeRange = document.getElementById('volumeRange');
+        const muteBtn = document.getElementById('muteBtn');
         const navBar = document.getElementById('nav-bar');
+        const mainWrapper = document.getElementById('main-wrapper');
 
+        let isMuted = false;
+        bgm.volume = 0.5;
+
+        function playClick() { clickSfx.currentTime = 0; clickSfx.play().catch(e=>{}); }
+
+        // [의상 체인지 로직]
+        function swapOutfit(imgId, original, alt) {
+            playClick();
+            const img = document.getElementById(imgId);
+            img.src = img.src.includes(original) ? alt : original;
+            img.style.transform = 'scale(1.1)';
+            setTimeout(() => { img.style.transform = 'scale(1)'; }, 200);
+        }
+
+        // [시작 버튼]
         document.getElementById('startBtn').addEventListener('click', function() {
-            document.getElementById('overlay').classList.add('fade-out');
-            mainWrapper.style.display = 'flex';
-            document.getElementById('bgm').play().catch(()=>{});
+            playClick(); startSfx.play(); bgm.play();
+            document.getElementById('overlayText').classList.add('pop-out');
+            setTimeout(() => {
+                document.getElementById('overlay').classList.add('fade-out');
+                mainWrapper.style.display = 'flex';
+                document.body.classList.add('loaded');
+                setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 700);
+            }, 800);
         });
 
+        // [볼륨 & 음소거]
+        volumeRange.addEventListener('input', (e) => { bgm.volume = e.target.value; });
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted; bgm.muted = isMuted;
+            muteBtn.innerText = isMuted ? '🔇' : '🎵';
+            playClick();
+        });
+
+        // [화면 전환]
         function showView(viewId) {
+            playClick();
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('char-category-view').style.display = 'block';
+            document.querySelectorAll('.char-detail-view').forEach(v => v.classList.remove('active'));
+
+            if (viewId === 'view-home') { navBar.classList.remove('active-nav'); mainWrapper.classList.remove('nav-padding'); }
+            else { navBar.classList.add('active-nav'); mainWrapper.classList.add('nav-padding'); }
             document.getElementById(viewId).classList.add('active');
-            if (viewId === 'view-home') navBar.classList.remove('active-nav');
-            else navBar.classList.add('active-nav');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function openCharDetail(type) {
+            playClick();
             document.getElementById('char-category-view').style.display = 'none';
-            document.getElementById('char-detail-' + type).style.display = 'block';
+            document.getElementById('char-detail-' + type).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function closeCharDetail() {
-            document.querySelectorAll('.char-detail-view').forEach(v => v.style.display = 'none');
+            playClick();
+            document.querySelectorAll('.char-detail-view').forEach(v => v.classList.remove('active'));
             document.getElementById('char-category-view').style.display = 'block';
         }
 
-        // SUB 캐릭터: 이름과 정보만 노출 (라벨 제거)
-        const subChars = [
-            {n:"펠리아", d:"비서 (30세)", i:"001.webp"}, {n:"남기욱", d:"재벌 (32세)", i:"002.webp"}, {n:"박승철", d:"촬영 감독 (39세)", i:"003.webp"}, {n:"양정식", d:"CEO (50세)", i:"004.webp"},
-            {n:"방울개", d:"작곡가", i:"005.webp"}, {n:"루이 김", d:"디자이너 (36세)", i:"006.webp"}, {n:"엘리아", d:"EXIA (21세)", i:"007.webp"}, {n:"티라", d:"EXIA (21세)", i:"008.webp"},
-            {n:"파란", d:"EXIA (20세)", i:"009.webp"}, {n:"가을", d:"EXIA (20세)", i:"010.webp"}, {n:"헤라", d:"EXIA (21세)", i:"011.webp"}, {n:"시우", d:"VIA:VOID (21세)", i:"012.webp"},
-            {n:"베니", d:"VIA:VOID (22세)", i:"013.webp"}, {n:"로먼", d:"VIA:VOID (20세)", i:"014.webp"}, {n:"주안", d:"VIA:VOID (20세)", i:"015.webp"}, {n:"아키", d:"VIA:VOID (22세)", i:"016.webp"},
-            {n:"여자팬", d:"엑스트라", i:"017.webp"}, {n:"남자팬", d:"엑스트라", i:"018.webp"}, {n:"사생팬", d:"엑스트라", i:"019.webp"}, {n:"열성팬", d:"엑스트라", i:"020.webp"}
-        ];
+        // 의상 및 명령어 데이터 삽입 (기존 데이터 유지)
+        const outfits = ["연습복:a", "트레이닝복:b", "사복:c", "속옷:d", "나체:e", "속박:f", "파자마:g", "무대의상1:h", "무대의상2:i", "무대의상3:j", "무대의상4:k", "간호사복:l", "경찰복:m", "드레스:n", "바니걸:o", "비키니:p", "산타복:q", "수트:r", "올블랙정장:s", "웨딩드레스:t", "한복:u", "메이드복:v"];
+        const outfitGrid = document.getElementById('outfit-list-data');
+        outfits.forEach(o => {
+            const [name, code] = o.split(':');
+            outfitGrid.innerHTML += `<div class="list-item"><div class="item-info"><span class="item-name">${name}</span><span class="item-code">${code}</span></div></div>`;
+        });
 
-        const subList = document.getElementById('sub-char-list');
-        subChars.forEach(c => {
-            subList.innerHTML += `
-                <div class="profile-card sub-card">
-                    <div class="profile-img-box"><img src="${c.i}"></div>
-                    <div class="profile-info">
-                        <h3>${c.n}</h3>
-                        <p class="sub-text">${c.d}</p>
-                    </div>
-                </div>`;
+        const cmds = ["!팬사이트:팬 사이트 열람", "!커뮤:커뮤니티 열람", "!위키:위키 열람", "!기사:기사 열람", "!SNS:SNS 열람", "!피팅:의상 확인", "!이미지:디버그"];
+        const cmdList = document.getElementById('cmd-list-data');
+        cmds.forEach(c => {
+            const [name, desc] = c.split(':');
+            cmdList.innerHTML += `<div class="list-item" style="margin-bottom:10px;"><div class="item-info"><span class="item-name">${name}</span><span style="color:#888;">${desc}</span></div></div>`;
         });
     </script>
 </body>
