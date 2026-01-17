@@ -7,11 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
         :root {
-            --main-pink: #FFD1DC;
-            --main-blue: #AEC6CF;
-            --main-purple: #DCD0FF;
-            --text-color: #5D5D5D;
-            --white: #ffffff;
+            --main-pink: #FFD1DC; --main-blue: #AEC6CF; --text-color: #5D5D5D; --white: #ffffff;
         }
 
         /* --- 기본 스타일 --- */
@@ -19,220 +15,191 @@
         body { background-color: var(--main-pink); color: var(--text-color); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
         
         /* --- 애니메이션 --- */
-        @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0) rotate(15deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        /* --- 진입 오버레이 --- */
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; transition: background 0.6s ease-in-out; }
-        #overlay.fade-out { background: transparent; pointer-events: none; }
-        .overlay-content { text-align: center; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .pop-out { animation: popOut 0.8s forwards; }
-        .start-btn { padding: 22px 50px; font-size: 2.3rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 0 #89a3ad; transition: all 0.2s ease; margin-top: 30px; }
-        .start-logo-img { width: 85%; max-width: 650px; height: auto; margin-bottom: 20px; }
+        /* --- 오버레이 --- */
+        #overlay { position: fixed; inset: 0; background: var(--main-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; transition: 0.6s; }
+        #overlay.fade-out { opacity: 0; pointer-events: none; }
+        .start-btn { padding: 20px 50px; font-size: 2.2rem; background: var(--white); color: var(--main-blue); border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 0 #89a3ad; transition: 0.2s; margin-top: 25px; }
+        .start-logo-img { width: 80%; max-width: 600px; height: auto; }
 
-        /* --- 내비게이션 바 --- */
-        nav { position: fixed; top: -100px; left: 0; width: 100%; height: 70px; background: rgba(255, 255, 255, 0.85); display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1000; border-bottom: 4px solid var(--main-blue); transition: all 0.5s; backdrop-filter: blur(8px); opacity: 0; }
-        nav.active-nav { top: 0; opacity: 1; }
-        .nav-link { padding: 8px 18px; border-radius: 20px; cursor: pointer; color: var(--main-blue); font-size: 1.2rem; transition: 0.2s; }
+        /* --- 내비게이션 --- */
+        nav { position: fixed; top: -100px; left: 0; width: 100%; height: 70px; background: rgba(255, 255, 255, 0.9); display: flex; justify-content: center; align-items: center; gap: 15px; z-index: 1000; border-bottom: 4px solid var(--main-blue); transition: 0.4s; backdrop-filter: blur(5px); }
+        nav.active-nav { top: 0; }
+        .nav-link { padding: 8px 18px; border-radius: 20px; cursor: pointer; color: var(--main-blue); font-size: 1.1rem; }
         .nav-link.active { background: var(--main-blue); color: white; }
 
-        /* --- 메인 영역 --- */
-        #main-wrapper { width: 100%; max-width: 1000px; padding-top: 50px; display: none; flex-direction: column; align-items: center; }
+        /* --- 레이아웃 --- */
+        #main-wrapper { width: 100%; max-width: 900px; padding-top: 30px; display: none; flex-direction: column; align-items: center; }
         #main-wrapper.nav-padding { padding-top: 100px; }
-        .view { display: none; width: 100%; animation: popIn 0.6s forwards; padding: 20px; }
+        .view { display: none; width: 100%; animation: popIn 0.5s forwards; padding: 20px; }
         .view.active { display: flex; flex-direction: column; align-items: center; }
 
-        /* --- 홈 화면 전용 --- */
-        .home-logo { text-align: center; margin-bottom: 50px; width: 100%; }
-        .main-logo-img { width: 95%; max-width: 750px; height: auto; animation: bounce 2s infinite; }
-        .menu-grid { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; width: 100%; }
-        .menu-img-btn { width: 260px; cursor: pointer; border-radius: 30px; overflow: hidden; transition: 0.3s; }
-        .menu-img-btn:hover { transform: scale(1.05); }
-        .menu-img-btn img { width: 100%; height: auto; display: block; }
+        /* --- 캐릭터 섹션 구조 --- */
+        .char-section { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .char-section.active { display: flex; }
 
-        /* --- 캐릭터 목록 구조 (핵심 수정 영역) --- */
-        .char-detail-view { display: none; width: 100%; flex-direction: column; align-items: center; }
-        .char-detail-view.active { display: flex; } /* 액티브 시에만 보이게 함 */
-        
-        .profile-list { display: flex; flex-direction: column; gap: 40px; width: 100%; align-items: center; margin-top: 30px; }
-        .profile-card { width: 100%; max-width: 500px; background: white; border-radius: 40px; border: 8px solid var(--main-pink); overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .profile-img-box { width: 100%; height: 400px; background: #fffcfd; overflow: hidden; border-bottom: 6px solid var(--main-pink); }
+        .profile-list { display: flex; flex-direction: column; gap: 35px; width: 100%; align-items: center; margin-top: 25px; }
+        .profile-card { width: 100%; max-width: 480px; background: white; border-radius: 40px; border: 8px solid var(--main-pink); overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .profile-img-box { width: 100%; height: 400px; background: #fffcfd; border-bottom: 6px solid var(--main-pink); display: flex; justify-content: center; align-items: center; }
         .profile-img-box img { width: 100%; height: 100%; object-fit: contain; }
-        .profile-info { padding: 30px; }
-        .profile-info h3 { font-size: 2.2rem; color: #ff8fa3; margin-bottom: 15px; border-bottom: 2px solid #ffedf0; display: inline-block; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stat-item { background: #fff5f7; padding: 10px 15px; border-radius: 15px; font-size: 1.1rem; border-left: 5px solid var(--main-pink); }
-        .outfit-swap-btn { width: 100%; margin-top: 20px; padding: 12px; background: var(--main-pink); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 1.2rem; }
+        .profile-info { padding: 25px; text-align: left; }
+        .profile-info h3 { font-size: 2rem; color: #ff8fa3; margin-bottom: 15px; border-bottom: 2px solid #ffedf0; display: inline-block; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-item { background: #fff5f7; padding: 10px; border-radius: 15px; font-size: 1rem; border-left: 5px solid var(--main-pink); }
+        .swap-btn { width: 100%; margin-top: 15px; padding: 12px; background: var(--main-pink); color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 0 #ebb5c1; }
 
-        /* --- 콘텐츠 공통 박스 --- */
-        .content-box { width: 100%; max-width: 850px; background: var(--white); padding: 40px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 50px; text-align: center; }
-        .list-item { background: #fdfdfd; padding: 12px; border-radius: 20px; border-left: 8px solid var(--main-pink); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .back-btn { margin-top: 30px; padding: 12px 40px; background: var(--main-pink); color: white; border: none; border-radius: 35px; cursor: pointer; font-size: 1.2rem; }
+        /* --- 공통 박스 및 버튼 --- */
+        .content-box { width: 100%; background: white; padding: 35px; border-radius: 40px; border: 8px solid var(--main-pink); margin-bottom: 40px; text-align: center; }
+        .category-btn { width: 100%; padding: 45px; border-radius: 30px; font-size: 2.8rem; cursor: pointer; color: white; transition: 0.3s; margin-bottom: 20px; border: none; letter-spacing: 2px; }
+        .category-btn:hover { transform: scale(1.02); }
+        .back-btn { margin-top: 25px; padding: 12px 35px; background: #ddd; color: white; border: none; border-radius: 30px; cursor: pointer; font-size: 1.1rem; }
 
-        /* --- 볼륨 조절 --- */
-        .volume-container { position: fixed; bottom: 25px; right: 25px; background: rgba(255, 255, 255, 0.6); padding: 10px 20px; border-radius: 40px; display: flex; align-items: center; gap: 10px; z-index: 100; border: 3px solid var(--main-pink); opacity: 0; transition: 1s; }
-        body.loaded .volume-container { opacity: 1; }
+        footer { color: white; padding: 40px 0; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <div class="overlay-content" id="overlayText">
-            <img src="logo.webp" class="start-logo-img">
-            <button class="start-btn" id="startBtn">START!</button>
-        </div>
+        <img src="logo.webp" class="start-logo-img">
+        <button class="start-btn" id="startBtn">START!</button>
     </div>
 
     <nav id="nav-bar">
         <div class="nav-link" onclick="showView('view-home')">HOME</div>
-        <div class="nav-link" onclick="showView('view-char')">캐릭터 목록</div>
-        <div class="nav-link" onclick="showView('view-outfit')">의상 목록</div>
-        <div class="nav-link" onclick="showView('view-cmd')">명령어 목록</div>
+        <div class="nav-link" onclick="showView('view-char')">캐릭터</div>
+        <div class="nav-link" onclick="showView('view-outfit')">의상</div>
+        <div class="nav-link" onclick="showView('view-cmd')">명령어</div>
     </nav>
 
     <audio id="bgm" loop><source src="cute_bgm.mp3" type="audio/mpeg"></audio>
     <audio id="startSfx"><source src="inside.mp3" type="audio/mpeg"></audio>
     <audio id="clickSfx"><source src="click.mp3" type="audio/mpeg"></audio>
 
-    <div class="volume-container">
-        <span id="muteBtn">🎵</span>
-        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.5">
-    </div>
-
     <main id="main-wrapper">
         <div id="view-home" class="view active">
-            <div class="home-logo">
-                <img src="logo.webp" class="main-logo-img">
-                <p style="color:white; background:rgba(0,0,0,0.1); padding:5px 20px; border-radius:20px; display:inline-block; margin-top:10px;">제작자: 아루이 / 플랫폼: 크랙</p>
-            </div>
-            <div class="menu-grid">
-                <div class="menu-img-btn" onclick="showView('view-char')"><img src="a.png"></div>
-                <div class="menu-img-btn" onclick="showView('view-outfit')"><img src="c.png"></div>
-                <div class="menu-img-btn" onclick="showView('view-cmd')"><img src="b.png"></div>
+            <img src="logo.webp" style="width:90%; max-width:650px; animation:bounce 2s infinite;">
+            <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; margin-top:40px;">
+                <img src="a.png" onclick="showView('view-char')" style="width:250px; cursor:pointer; border-radius:25px;">
+                <img src="c.png" onclick="showView('view-outfit')" style="width:250px; cursor:pointer; border-radius:25px;">
+                <img src="b.png" onclick="showView('view-cmd')" style="width:250px; cursor:pointer; border-radius:25px;">
             </div>
         </div>
 
         <div id="view-char" class="view">
             
-            <div id="char-category-view" class="content-box">
-                <h2 style="color: var(--main-pink); margin-bottom: 30px; font-size: 2.5rem;">💖 캐릭터 분류 선택</h2>
-                <div style="display:flex; flex-direction:column; gap:20px;">
-                    <div onclick="openCharDetail('main')" style="background:var(--main-pink); color:white; padding:40px; border-radius:30px; font-size:2.5rem; cursor:pointer;">MAIN IDOLS</div>
-                    <div onclick="openCharDetail('sub')" style="background:var(--main-blue); color:white; padding:40px; border-radius:30px; font-size:2.5rem; cursor:pointer;">SUB CHARACTERS</div>
+            <div id="char-step-category" class="char-section active">
+                <div class="content-box">
+                    <h2 style="color:var(--main-pink); margin-bottom:30px; font-size:2.5rem;">CATEGORY</h2>
+                    <button class="category-btn" style="background:var(--main-pink);" onclick="openCharStep('main')">MAIN</button>
+                    <button class="category-btn" style="background:var(--main-blue);" onclick="openCharStep('sub')">SUB</button>
+                    <button class="back-btn" onclick="showView('view-home')">홈으로</button>
                 </div>
-                <button class="back-btn" onclick="showView('view-home')">메인으로</button>
             </div>
 
-            <div id="char-detail-main" class="char-detail-view content-box">
-                <h2 style="color: var(--main-pink); font-size: 2.5rem;"> MAIN</h2>
-                <div class="profile-list">
-                    <div class="profile-card">
-                        <div class="profile-img-box"><img id="img-yuri" src="c11.webp"></div>
-                        <div class="profile-info"><h3>임유리 (21)</h3><div class="stats-grid"><div class="stat-item">ISTJ</div><div class="stat-item">168cm</div><div class="stat-item">C컵</div></div>
-                        <button class="outfit-swap-btn" onclick="swapOutfit('img-yuri', 'c11.webp', 'c12.webp')">의상 체인지! ✨</button></div>
+            <div id="char-step-main" class="char-section">
+                <div class="content-box">
+                    <h2 style="color:var(--main-pink); font-size:2.8rem;">MAIN</h2>
+                    <div class="profile-list">
+                        <div class="profile-card">
+                            <div class="profile-img-box"><img id="m1" src="c11.webp"></div>
+                            <div class="profile-info"><h3>임유리 (21)</h3><div class="stats-grid"><div class="stat-item">ISTJ</div><div class="stat-item">168cm</div><div class="stat-item">C컵</div></div><button class="swap-btn" onclick="swap('m1','c11.webp','c12.webp')">의상 체인지 ✨</button></div>
+                        </div>
+                        <div class="profile-card">
+                            <div class="profile-img-box"><img id="m2" src="c21.webp"></div>
+                            <div class="profile-info"><h3>강시유 (20)</h3><div class="stats-grid"><div class="stat-item">ENFP</div><div class="stat-item">162cm</div><div class="stat-item">E컵</div></div><button class="swap-btn" onclick="swap('m2','c21.webp','c22.webp')">의상 체인지 ✨</button></div>
+                        </div>
+                        <div class="profile-card">
+                            <div class="profile-img-box"><img id="m3" src="c31.webp"></div>
+                            <div class="profile-info"><h3>강예은 (21)</h3><div class="stats-grid"><div class="stat-item">INFP</div><div class="stat-item">164cm</div><div class="stat-item">B컵</div></div><button class="swap-btn" onclick="swap('m3','c31.webp','c32.webp')">의상 체인지 ✨</button></div>
+                        </div>
+                        <div class="profile-card">
+                            <div class="profile-img-box"><img id="m4" src="c41.webp"></div>
+                            <div class="profile-info"><h3>정보라 (20)</h3><div class="stats-grid"><div class="stat-item">ESTP</div><div class="stat-item">162cm</div><div class="stat-item">A컵</div></div><button class="swap-btn" onclick="swap('m4','c41.webp','c42.webp')">의상 체인지 ✨</button></div>
+                        </div>
+                        <div class="profile-card">
+                            <div class="profile-img-box"><img id="m5" src="c51.webp"></div>
+                            <div class="profile-info"><h3>이수아 (20)</h3><div class="stats-grid"><div class="stat-item">INTP</div><div class="stat-item">170cm</div><div class="stat-item">F컵</div></div><button class="swap-btn" onclick="swap('m5','c51.webp','c52.webp')">의상 체인지 ✨</button></div>
+                        </div>
                     </div>
-                    </div>
-                <button class="back-btn" onclick="closeCharDetail()">뒤로가기</button>
+                    <button class="back-btn" style="background:var(--main-pink)" onclick="closeCharStep()">카테고리로</button>
+                </div>
             </div>
 
-            <div id="char-detail-sub" class="char-detail-view content-box" style="border-color: var(--main-blue);">
-                <h2 style="color: var(--main-blue); font-size: 2.5rem;"> SUB</h2>
-                <div class="profile-list" id="sub-list-container">
-                    </div>
-                <button class="back-btn" onclick="closeCharDetail()" style="background:var(--main-blue)">뒤로가기</button>
+            <div id="char-step-sub" class="char-section">
+                <div class="content-box" style="border-color:var(--main-blue)">
+                    <h2 style="color:var(--main-blue); font-size:2.8rem;">SUB</h2>
+                    <div class="profile-list" id="sub-list">
+                        </div>
+                    <button class="back-btn" style="background:var(--main-blue)" onclick="closeCharStep()">카테고리로</button>
+                </div>
             </div>
         </div>
 
-        <div id="view-outfit" class="view"><div class="content-box"><h2>👗 의상 목록</h2><div id="outfit-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;"></div><button class="back-btn" onclick="showView('view-home')">메인으로</button></div></div>
-        
-        <div id="view-cmd" class="view"><div class="content-box"><h2>⌨️ 명령어 목록</h2><div id="cmd-list" style="text-align:left; margin-top:20px;"></div><button class="back-btn" onclick="showView('view-home')">메인으로</button></div></div>
+        <div id="view-outfit" class="view"><div class="content-box"><h2>👗 의상 목록</h2><div id="o-list" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;"></div><button class="back-btn" onclick="showView('view-home')">홈으로</button></div></div>
+        <div id="view-cmd" class="view"><div class="content-box"><h2>⌨️ 명령어 목록</h2><div id="c-list" style="text-align:left; margin-top:20px;"></div><button class="back-btn" onclick="showView('view-home')">홈으로</button></div></div>
 
-        <footer style="color:white; padding: 40px 0;">&copy; 2026 Idol Planner Project.</footer>
+        <footer>&copy; 2026 Idol Planner Project.</footer>
     </main>
 
     <script>
         const bgm = document.getElementById('bgm');
         const startSfx = document.getElementById('startSfx');
         const clickSfx = document.getElementById('clickSfx');
-        const mainWrapper = document.getElementById('main-wrapper');
+        const mainWrap = document.getElementById('main-wrapper');
 
         function playClick() { clickSfx.currentTime = 0; clickSfx.play().catch(e=>{}); }
+        function swap(id,o,a) { playClick(); const i = document.getElementById(id); i.src = i.src.includes(o)?a:o; }
 
-        // [화면 전환 로직]
         function showView(viewId) {
             playClick();
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            
-            // 캐릭터 탭 진입 시 초기화
-            if(viewId === 'view-char') {
-                document.getElementById('char-category-view').style.display = 'block';
-                document.querySelectorAll('.char-detail-view').forEach(v => v.classList.remove('active'));
-            }
-
-            if(viewId === 'view-home') { document.getElementById('nav-bar').classList.remove('active-nav'); mainWrapper.classList.remove('nav-padding'); }
-            else { document.getElementById('nav-bar').classList.add('active-nav'); mainWrapper.classList.add('nav-padding'); }
-
+            if(viewId === 'view-char') closeCharStep();
+            if(viewId === 'view-home') { document.getElementById('nav-bar').classList.remove('active-nav'); mainWrap.classList.remove('nav-padding'); }
+            else { document.getElementById('nav-bar').classList.add('active-nav'); mainWrap.classList.add('nav-padding'); }
             document.getElementById(viewId).classList.add('active');
             window.scrollTo(0,0);
         }
 
-        // [캐릭터 상세 열기/닫기]
-        function openCharDetail(type) {
+        function openCharStep(step) {
             playClick();
-            document.getElementById('char-category-view').style.display = 'none';
-            document.getElementById('char-detail-' + type).classList.add('active');
+            document.querySelectorAll('.char-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('char-step-' + step).classList.add('active');
             window.scrollTo(0,0);
         }
 
-        function closeCharDetail() {
-            playClick();
-            document.querySelectorAll('.char-detail-view').forEach(v => v.classList.remove('active'));
-            document.getElementById('char-category-view').style.display = 'block';
+        function closeCharStep() {
+            document.querySelectorAll('.char-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('char-step-category').classList.add('active');
         }
 
-        // [메인 의상 교체]
-        function swapOutfit(id, o, a) {
-            playClick();
-            const img = document.getElementById(id);
-            img.src = img.src.includes(o) ? a : o;
-        }
-
-        // [시작 버튼]
         document.getElementById('startBtn').addEventListener('click', () => {
             playClick(); startSfx.play(); bgm.play();
-            document.getElementById('overlayText').classList.add('pop-out');
-            setTimeout(() => {
-                document.getElementById('overlay').classList.add('fade-out');
-                mainWrapper.style.display = 'flex';
-                document.body.classList.add('loaded');
-            }, 800);
+            document.getElementById('overlay').classList.add('fade-out');
+            mainWrap.style.display = 'flex';
+            setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 600);
         });
 
-        // [데이터 생성: 서브 캐릭터 20명]
-        const subData = [
+        const subs = [
             {n:"펠리아 (30)", r:"비서", i:"001.webp"}, {n:"남기욱 (32)", r:"재벌", i:"002.webp"}, {n:"박승철 (39)", r:"촬영 감독", i:"003.webp"},
-            {n:"양정식 (50)", r:"기획사 CEO", i:"004.webp"}, {n:"방울개 (?)", r:"작곡가", i:"005.webp"}, {n:"루이 김 (36)", r:"디자이너", i:"006.webp"},
+            {n:"양정식 (50)", r:"CEO", i:"004.webp"}, {n:"방울개 (?)", r:"작곡가", i:"005.webp"}, {n:"루이 김 (36)", r:"디자이너", i:"006.webp"},
             {n:"엘리아 (21)", r:"EXIA", i:"007.webp"}, {n:"티라 (21)", r:"EXIA", i:"008.webp"}, {n:"파란 (20)", r:"EXIA", i:"009.webp"},
             {n:"가을 (20)", r:"EXIA", i:"010.webp"}, {n:"헤라 (21)", r:"EXIA", i:"011.webp"}, {n:"시우 (21)", r:"VIA:VOID", i:"012.webp"},
             {n:"베니 (22)", r:"VIA:VOID", i:"013.webp"}, {n:"로먼 (20)", r:"VIA:VOID", i:"014.webp"}, {n:"주안 (20)", r:"VIA:VOID", i:"015.webp"},
             {n:"아키 (22)", r:"VIA:VOID", i:"016.webp"}, {n:"여자팬", r:"EXTRA", i:"017.webp"}, {n:"남자팬", r:"EXTRA", i:"018.webp"},
             {n:"사생팬", r:"EXTRA", i:"019.webp"}, {n:"열성팬", r:"EXTRA", i:"020.webp"}
         ];
-        const subContainer = document.getElementById('sub-list-container');
-        subData.forEach(s => {
-            subContainer.innerHTML += `<div class="profile-card" style="border-color:var(--main-blue)"><div class="profile-img-box"><img src="${s.i}"></div><div class="profile-info"><h3 style="color:#6a89cc">${s.n}</h3><div class="stat-item" style="border-left-color:var(--main-blue)">역할: ${s.r}</div></div></div>`;
+        const subList = document.getElementById('sub-list');
+        subs.forEach(s => {
+            subList.innerHTML += `<div class="profile-card" style="border-color:var(--main-blue)"><div class="profile-img-box"><img src="${s.i}"></div><div class="profile-info"><h3 style="color:#6a89cc">${s.n}</h3><div class="stat-item" style="border-left-color:var(--main-blue)">${s.r}</div></div></div>`;
         });
 
-        // 의상 및 명령어 목록
-        const outfits = ["연습복:a", "트레이닝복:b", "사복:c", "속옷:d", "나체:e", "파자마:g", "무대의상1:h", "비키니:p", "메이드복:v"];
-        outfits.forEach(o => { const [n, c] = o.split(':'); document.getElementById('outfit-grid').innerHTML += `<div class="list-item"><span>${n}</span><b>${c}</b></div>`; });
-        const cmds = ["!팬사이트:팬 사이트 열람", "!커뮤:커뮤니티 열람", "!위키:위키 열람", "!기사:기사 열람", "!피팅:의상 확인"];
-        cmds.forEach(c => { const [n, d] = c.split(':'); document.getElementById('cmd-list').innerHTML += `<div class="list-item"><span>${n}</span><small>${d}</small></div>`; });
-
-        // 볼륨
-        document.getElementById('volumeRange').addEventListener('input', (e) => bgm.volume = e.target.value);
+        const os = ["연습복:a", "트레이닝복:b", "사복:c", "속옷:d", "나체:e", "파자마:g", "무대의상1:h", "비키니:p", "메이드복:v"];
+        os.forEach(x => { const [n,c]=x.split(':'); document.getElementById('o-list').innerHTML += `<div style="background:#f9f9f9; padding:10px; border-radius:10px; border-left:5px solid var(--main-pink); display:flex; justify-content:space-between"><span>${n}</span><b>${c}</b></div>`; });
+        const cs = ["!팬사이트:열람", "!커뮤:열람", "!위키:열람", "!기사:열람", "!피팅:확인"];
+        cs.forEach(x => { const [n,d]=x.split(':'); document.getElementById('c-list').innerHTML += `<div style="margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;"><b>${n}</b> - <span style="color:#777">${d}</span></div>`; });
     </script>
 </body>
 </html>
